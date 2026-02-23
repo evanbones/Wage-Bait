@@ -5,7 +5,6 @@ function SearchBar() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Searching for:", query);
     // Logic for loading a new page will go here
     alert(`Navigating to results for: ${query}`);
   };
@@ -18,9 +17,9 @@ function SearchBar() {
           placeholder="Search jobs..." 
           value={query}
           onChange={e => setQuery(e.target.value)} 
-          style={{ padding: '8px', fontSize: '16px', width: '300px' }}
+          
         />
-        <button type="submit" style={{ padding: '8px 16px', fontSize: '16px', cursor: 'pointer' }}>
+        <button type="submit">
           Search
         </button>
       </form>
