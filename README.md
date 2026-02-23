@@ -1,1 +1,1 @@
-# Wage-Bait
+# Wage Bait
