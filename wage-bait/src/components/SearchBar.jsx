@@ -11,7 +11,7 @@ function SearchBar() {
   };
 
   return (
-    <div style={{ marginTop: "20px", padding: "10px" }}>
+    <div>
       <form
         onSubmit={handleSubmit}
         style={{ display: "flex", gap: "8px", justifyContent: "center" }}

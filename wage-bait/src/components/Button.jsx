@@ -1,4 +1,5 @@
 import React from "react";
+import "./styles/Button.css";
 
 export const Button = ({ children, onClick, disabled, type = 'button', className }) => {
   return (
