@@ -3,9 +3,14 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import SearchBar from './components/SearchBar'
+import { Button } from './components/Button'
 
 function App() {
   const [count, setCount] = useState(0)
+
+  const handleClick = () => {
+    alert('Button clicked!');
+  };
 
   return (
     <>
@@ -27,6 +32,9 @@ function App() {
           Edit <code>src/App.jsx</code> and save to test HMR
         </p>
       </div>
+      <Button onClick={handleClick} className="my-custom-button">
+        Click Me
+      </Button>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
