@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "./Button";
 import "./styles/Header.css";
+import SearchBar from "./SearchBar";
 
 export const Header = () => {
   return (
@@ -10,6 +11,7 @@ export const Header = () => {
           Wage Bait
         </div>
         <div className="search">
+            <SearchBar />
         </div>
         <nav className="nav-links">
           <ul>
