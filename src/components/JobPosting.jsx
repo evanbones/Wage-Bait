@@ -1,11 +1,9 @@
+import React from "react";
+import "./styles/JobPosting.css";
+
 function JobPosting({ title, company, wage }) {
     return (
-        <div className="posting" style={{
-            border: "2px solid black",
-            padding: "10px",
-            margin: "10px 0",
-            borderRadius: "8px"
-            }}>
+        <div className="posting">
             <p className="title">{title}</p>
             <p className="company">{company}</p>
             <p className="wage">{wage}</p>
