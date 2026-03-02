@@ -7,11 +7,6 @@ import { Header } from './components/Header'
 import JobPosting from "./components/JobPosting";
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  const handleClick = () => {
-    alert('Button clicked!');
-  };
 
   return (
     <>
