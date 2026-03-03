@@ -1,6 +1,19 @@
+:root {
+  --brand-serif: 'DM Serif Display', serif;
+  --brand-sans: 'Inter', sans-serif;
+  --text-color: #1a1a1a;
+}
+
 #root {
-  max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
+  font-family: var(--brand-sans); 
+  color: var(--text-color);
+  background-color: #f9f8f4; 
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+  padding: 0;
 }

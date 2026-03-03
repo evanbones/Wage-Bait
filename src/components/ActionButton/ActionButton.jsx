@@ -1,7 +1,7 @@
 import React from "react";
-import "./styles/Button.css";
+import "./ActionButton.css";
 
-export const Button = ({ children, onClick, disabled, type = 'button', className }) => {
+const ActionButton = ({ children, onClick, disabled, type = 'button', className }) => {
   return (
     <button
       type={type}
@@ -13,3 +13,5 @@ export const Button = ({ children, onClick, disabled, type = 'button', className
     </button>
   );
 };
+
+export default ActionButton;

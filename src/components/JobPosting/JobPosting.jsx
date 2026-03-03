@@ -1,12 +1,14 @@
 import React from "react";
-import "./styles/JobPosting.css";
+import "./JobPosting.css";
+import ActionButton from "../ActionButton/ActionButton.jsx";
 
 function JobPosting({ title, company, wage }) {
     return (
         <div className="posting">
-            <p className="title">{title}</p>
+            <h2 className="title">{title}</h2>
             <p className="company">{company}</p>
             <p className="wage">{wage}</p>
+            <ActionButton className="btn-register">Apply Now</ActionButton>
         </div>
     );
 }

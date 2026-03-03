@@ -1,0 +1,25 @@
+button {
+  border-radius: 100px;
+  background-color: white;
+  padding: 0.8em 2.4em;
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: var(--brand-sans);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border: 1px solid black;
+}
+
+.btn-register {
+  background-color: black;
+  color: white;
+}
+
+.btn-register:hover {
+  background-color: #5a5958;
+  border: 1px solid #5a5958;
+}
+
+button:hover {
+  background-color: #d4d4d3;
+}

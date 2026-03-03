@@ -1,0 +1,32 @@
+.posting {
+  border: 1px solid #e0e0de;
+  padding: 2.5rem;
+  margin: 20px auto;
+  max-width: 600px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  transition: all 0.2s ease-in-out;
+}
+
+.posting:hover {
+  border-color: black;
+}
+
+.posting h2 {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.1;
+}
+
+.posting .company-info {
+  font-family: var(--brand-sans);
+  font-weight: 600;
+  color: #70706b;
+  margin-bottom: 1rem;
+}
+
+.posting .wage {
+  font-family: var(--brand-sans);
+  font-weight: 400;
+  color: #000;
+}
