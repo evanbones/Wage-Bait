@@ -1,0 +1,23 @@
+.register-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 50px;
+    
+    
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+
+    width: 300px;
+    margin: auto;
+    
+    border-radius: 12px;
+    background-color: #D1E5F4; 
+    border: 1px solid #9ABDDC;
+
+    
+
+}
