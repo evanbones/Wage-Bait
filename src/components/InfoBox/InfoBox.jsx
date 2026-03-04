@@ -6,7 +6,12 @@ export const InfoBox = ({ label, type = "text", value, onChange }) => {
     <div className="info-box">
       <label className="info-label">{label}</label>
       <br />
-      <input type={type} className="field-input" value={value} onChange={onChange}/>
+      <input
+        type={type}
+        className="field-input"
+        value={value}
+        onChange={onChange}
+      />
     </div>
   );
 };
