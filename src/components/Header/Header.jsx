@@ -13,13 +13,13 @@ function Header() {
           <LogoPhoto />
           <Logo text="Wage Bait" />
         </div>
-        <div className="right-section">
-          <div className="search">
-            <SearchBar />
-          </div>
-          <div className="action-buttons">
-            <ButtonContainer />
-          </div>
+        
+        <div className="search">
+          <SearchBar />
+        </div>
+
+        <div className="action-buttons">
+          <ButtonContainer />
         </div>
       </div>
     </header>

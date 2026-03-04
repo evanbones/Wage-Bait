@@ -4,14 +4,6 @@ import "./SearchBar.css";
 
 function SearchBar() {
   const [query, setQuery] = useState("");
-  const [isExpanded, setExpanded] = useState(false);
-
-  const toggleSearchBar = () => {
-    setExpanded(!isExpanded);
-    if (isExpanded) {
-      setQuery("");
-    }
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -19,7 +11,7 @@ function SearchBar() {
   };
 
   return (
-    <div className={`search-bar ${isExpanded ? "expanded" : ""}`}>
+    <div className="search-bar">
       <form onSubmit={handleSubmit} className="search-form">
         <input
           type="text"
