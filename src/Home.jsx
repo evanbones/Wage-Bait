@@ -1,4 +1,5 @@
 import Header from "./components/Header/Header.jsx";
+import Footer from "./components/Footer/Footer.jsx";
 import JobPosting from "./components/JobPosting/JobPosting.jsx";
 import "./Register.css";
 
@@ -21,6 +22,7 @@ function Register() {
         company="Epic Games"
         wage="$19.00/year"
       />
+      <Footer />
     </>
   );
 }
