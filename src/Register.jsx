@@ -3,7 +3,6 @@ import { InfoBox } from './components/InfoBox/InfoBox.jsx'
 import ActionButton from './components/ActionButton/ActionButton.jsx'
 import  './Register.css'
 
-
 function Register() {
     return (
         <>

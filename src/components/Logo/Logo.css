@@ -1,0 +1,9 @@
+.logo-text {
+  margin: 0;
+  text-decoration: none;
+  font-family: var(--brand-serif);
+  font-size: 2rem;
+  letter-spacing: -0.03em;
+  color: var(--text-color);
+  font-weight: 700;
+}

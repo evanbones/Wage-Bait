@@ -1,7 +1,7 @@
 .navbar {
-  background-color: #D1E5F4; 
-  border-bottom: 1px solid #9ABDDC; 
-  padding: 1rem 2rem; 
+  background-color: #d1e5f4;
+  border-bottom: 1px solid #9abddc;
+  padding: 1rem 2rem;
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -17,26 +17,17 @@
 }
 
 .logo {
-  font-family: var(--brand-serif);
-  font-size: 2rem; 
-  letter-spacing: -0.03em;
-  color: var(--text-color); 
-  font-weight: 700;
   cursor: pointer;
-  margin: 0; 
+  margin: 0;
   display: flex;
   align-items: center;
   white-space: nowrap;
 }
 
-.logo p {
-  margin: 0;
-}
-
 .right-section {
   display: flex;
   align-items: center;
-  gap: 2.5rem; 
+  gap: 2.5rem;
 }
 
 .nav-links ul li {
