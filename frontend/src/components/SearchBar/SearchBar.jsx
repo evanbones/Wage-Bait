@@ -1,18 +1,24 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import "./SearchBar.css";
 
 function SearchBar() {
   const [query, setQuery] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    alert(`Navigating to results for: ${query}`);
+    if (!query.trim()) return;
+
+   navigate(`/search?q=${encodeURIComponent(query)}`);
+
+   setQuery("");
   };
 
   return (
     <div className="search-bar">
-      <form onSubmit={handleSubmit} className="search-form">
+      <form onSubmit={handleSearch} className="search-form">
         <input
           type="text"
           placeholder="Search jobs..."

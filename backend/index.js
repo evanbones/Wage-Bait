@@ -29,6 +29,16 @@ app.get('/api/get', (req, res) => {
     });
 });
 
+app.get('/api/search', (req, res) => {
+    const searchTerm = req.query.q;
+
+    if(!searchTerm) {
+        return res.json([]);
+    }
+
+    res.json(searchTerm);
+})
+
 app.listen(PORT, () => {
     console.log(`Express running on http://localhost:${PORT}`);
 });

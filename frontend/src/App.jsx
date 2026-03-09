@@ -3,6 +3,7 @@ import "./App.css";
 import Register from "./Register.jsx";
 import Home from "./Home.jsx";
 import Login from "./Login.jsx";
+import SearchResults from "./SearchResults.jsx";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/search" element={<SearchResults />} />
         </Routes>
       </BrowserRouter>
     </>
