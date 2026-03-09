@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import Header from "./components/Header/Header";
 
 function SearchResults() {
   const [searchParams] = useSearchParams();
@@ -31,6 +32,8 @@ function SearchResults() {
   }, [query]);
 
   return (
+    <>
+    <Header />
     <div className="search-results-page" style={{ padding: '20px' }}>
       <h2>Search Results for: "{query}"</h2>
 
@@ -40,15 +43,15 @@ function SearchResults() {
         <p style={{ color: "red" }}>No results found.</p>
       ) : (
         <ul className="results-list">
-          {results.map((item) => (
-            <li key={item.id} style={{ marginBottom: "10px" }}>
-              {/* make it fit data in the json file we made */}
-              <strong>{item.name}</strong> - {item.brand} 
+          {results.map((item, index) => (
+            <li key={index} style={{ marginBottom: "10px" }}>
+              <strong>{item.title}</strong> - {item.company} (${item.salary})
             </li>
           ))}
         </ul>
       )}
     </div>
+    </>
   );
 }
 

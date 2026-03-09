@@ -40,7 +40,20 @@ app.get('/api/search', (req, res) => {
         return res.json([]);
     }
 
-    res.json(searchTerm);
+    try {
+        const fileData = fs.readFileSync(path.join(DATA_PATH, 'jobs.json'), 'utf8');
+        const jobs = JSON.parse(fileData);
+        
+        const filteredJobs = jobs.filter(job => 
+            job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            job.company.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        
+        res.status(200).json(filteredJobs);
+    } catch (error) {
+        console.error("Error searching data:", error);
+        res.status(500).json({ message: "Search failed" });
+    }
 })
 
 app.listen(PORT, () => {
