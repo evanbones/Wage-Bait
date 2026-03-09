@@ -41,7 +41,7 @@ function Register() {
 
     response.then((res) => res.json()).then((data) => {
       console.log(data);
-      err.textContent = data.message + " " + data.recievedData.username;
+      err.textContent = data.message + " " + data.receivedData.username;
     });
     
     setUsername("");
