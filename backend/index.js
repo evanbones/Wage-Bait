@@ -11,13 +11,29 @@ app.use(cors());
 app.use(express.json());
 
 app.post('/api/submit', (req, res) => {
-    const formData = req.body;
+    const newUser = req.body;
+    console.log("Hell yeah, got some stuff from React: ", newUser);
+    const usersFile = path.join(DATA_PATH, 'users.json');
 
-    console.log("Hell yeah, got some stuff from React: ", formData);
+    fs.readFile(usersFile, 'utf8', (err, data) => {
+        let users = [];
+        if (!err && data) {
+            users = JSON.parse(data);
+        }
 
-    res.status(200).json({
-        message: "Got yer data",
-        recievedData: formData
+        users.push(newUser);
+        fs.writeFile(usersFile, JSON.stringify(users, null, 2), (writeErr) => {
+            if (writeErr) {
+                console.error("Error writing to file:", writeErr);
+                return res.status(500).json({ message: "Failed to save data" });
+            }
+
+            console.log("User saved successfully!");
+            res.status(200).json({
+                message: "Got yer data and saved it.",
+                receivedData: newUser
+            });
+        });
     });
 });
 
