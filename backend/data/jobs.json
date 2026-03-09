@@ -1,0 +1,44 @@
+[
+    {
+        "title": "Unpaid Intern",
+        "salary": 0,
+        "company": "Microsoft 2",
+        "remote": true
+    },
+    {
+        "title": "Senior Developer",
+        "salary": 50000,
+        "company": "Epic Games",
+        "remote": false
+    },
+    {
+        "title": "Sandwich Artist",
+        "salary": 70000,
+        "company": "Subway",
+        "remote": false
+    },
+    {
+        "title": "Fry Cook",
+        "salary": 30000,
+        "company": "McDonald's",
+        "remote": false
+    },
+    {
+        "title": "Executive",
+        "salary": 120000,
+        "company": "Graemeware",
+        "remote": false
+    },
+    {
+        "title": "Wage Baiter",
+        "salary": 2.50,
+        "company": "Wage Bait",
+        "remote": true
+    },
+    {
+        "title": "Homeless",
+        "salary": 0,
+        "company": "East Hastings",
+        "remote": false
+    }
+]
