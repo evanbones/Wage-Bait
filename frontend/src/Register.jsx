@@ -13,7 +13,20 @@ function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    const err = document.getElementById("error-message")
+    err.textContent = "";
+    if (!username || !email || !password || !confirmPassword) {
+      err.textContent = "At least one field is empty";
+      return;
+    }
+    if (password !== confirmPassword) {
+      err.textContent = "Passwords must match";
+      return;
+    }
+    if (password.length < 8) {
+      err.textContent = "Password must be at least 8 characters long";
+      return;
+    }
     const response = fetch("http://localhost:8000/api/submit", {
       method: "POST",
       headers: {
@@ -28,7 +41,13 @@ function Register() {
 
     response.then((res) => res.json()).then((data) => {
       console.log(data);
+      err.textContent = data.message + " " + data.recievedData.username;
     });
+    
+    setUsername("");
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
 
   }
 
@@ -59,6 +78,7 @@ function Register() {
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
         <ActionButton className="btn-register" type="submit"> Sign Up</ActionButton>
+        <p id="error-message"></p>
       </form>
     </>
   );
