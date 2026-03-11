@@ -3,5 +3,20 @@
     "username": "newuser",
     "email": "user@user.com",
     "password": "evan"
+  },
+  {
+    "username": "patrick",
+    "email": "p",
+    "password": "mailmail"
+  },
+  {
+    "username": "patrick",
+    "email": "pat",
+    "password": "patrickr"
+  },
+  {
+    "username": "patrick2",
+    "email": "patrick",
+    "password": "lalalala"
   }
 ]

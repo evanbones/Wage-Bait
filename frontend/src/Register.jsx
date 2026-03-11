@@ -27,7 +27,7 @@ function Register() {
       err.textContent = "Password must be at least 8 characters long";
       return;
     }
-    const response = fetch("http://localhost:8000/api/submit", {
+    const response = fetch("http://localhost:8000/api/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
