@@ -10,7 +10,7 @@ const DATA_PATH = path.join(__dirname, 'data');
 app.use(cors());
 app.use(express.json());
 
-app.post('/api/submit', (req, res) => {
+app.post('/api/register', (req, res) => {
     const newUser = req.body;
     console.log("Hell yeah, got some stuff from React: ", newUser);
     const usersFile = path.join(DATA_PATH, 'users.json');
