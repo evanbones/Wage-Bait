@@ -1,0 +1,28 @@
+# =========================================
+# Stage: Development (Express.js Backend)
+# =========================================
+FROM node:22-alpine
+
+# Set working directory inside the container
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy rest of the source code
+COPY . .
+
+# Ensure the "node" user owns the application files
+RUN chown -R node:node /app
+
+# Switch to the built-in non-root "node" user
+USER node
+
+# Expose backend port
+EXPOSE 8000
+
+# Run Node with the native watch flag for hot reloading
+CMD ["node", "--watch", "index.js"]
