@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { searchJobs } from "./controllers/searchController.js";
 import { registerUser } from "./controllers/userController.js";
+import { loginUser } from "./controllers/loginController.js";
 import Database from "./db/connection.js";
 
 const app = express();
@@ -19,6 +20,7 @@ app.use(express.json());
 // Routes
 app.post("/api/register", registerUser);
 app.get("/api/search", searchJobs);
+app.post("/api/login", loginUser);
 
 app.listen(PORT, () => {
   console.log(`Express running on http://localhost:${PORT}`);
