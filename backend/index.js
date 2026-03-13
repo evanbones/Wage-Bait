@@ -20,13 +20,15 @@ app.use(express.json());
 app.post("/api/register", registerUser);
 app.get("/api/search", searchJobs);
 
+app.listen(PORT, () => {
+  console.log(`Express running on http://localhost:${PORT}`);
+});
+
 process.on("SIGINT", async () => {
   try {
     await db.disconnect();
-
-    app.listen(PORT, () => {
-      console.log(`Express running on http://localhost:${PORT}`);
-    });
+    console.log("Database disconnected. Exiting process.");
+    process.exit(0);
   } catch (err) {
     console.error(err);
     process.exit(1);
