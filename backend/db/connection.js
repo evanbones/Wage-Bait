@@ -1,5 +1,6 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 mongoose.set("strictQuery", false);
+
 class Database {
   constructor(uri, options) {
     this.uri = uri;
@@ -29,4 +30,4 @@ class Database {
   }
 }
 
-module.exports = Database;
+export default Database;

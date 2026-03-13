@@ -18,5 +18,25 @@
     "username": "patrick2",
     "email": "patrick",
     "password": "lalalala"
+  },
+  {
+    "username": "evan",
+    "email": "evan@bowness.ca",
+    "password": "evanevan"
+  },
+  {
+    "username": "test",
+    "email": "test",
+    "password": "testtest"
+  },
+  {
+    "username": "evanreal",
+    "email": "evan@bowness.ca",
+    "password": "testtest"
+  },
+  {
+    "username": "evantruereal",
+    "email": "evan@bowness.ca",
+    "password": "testtest"
   }
 ]

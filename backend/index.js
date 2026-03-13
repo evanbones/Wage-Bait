@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { searchJobs } from './controllers/searchController.js';
 import { registerUser } from './controllers/userController.js';
-const Database = require("./db/database");
+import Database from './db/connection.js';
 
 const app = express();
 const PORT = 8000;

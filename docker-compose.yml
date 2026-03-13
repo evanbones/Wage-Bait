@@ -27,10 +27,11 @@ services:
       dockerfile: Dockerfile.dev
     ports:
       - "8000:8000"
+    env_file:
+      - ./backend/config.env
     environment:
       - NODE_ENV=development
     volumes:
-      # This ensures your users.json saves locally and persists!
       - ./backend/data:/app/data 
     develop:
       watch:
