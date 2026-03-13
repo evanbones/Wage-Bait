@@ -1,7 +1,7 @@
 # =========================================
 # Stage: Development (Express.js Backend)
 # =========================================
-FROM node:22-alpine
+FROM node:22-slim
 
 # Set working directory inside the container
 WORKDIR /app
