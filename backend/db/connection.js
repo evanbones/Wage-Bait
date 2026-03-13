@@ -1,22 +1,32 @@
-import { MongoClient, ServerApiVersion } from "mongodb";
+const mongoose = require("mongoose");
+mongoose.set("strictQuery", false);
+class Database {
+  constructor(uri, options) {
+    this.uri = uri;
+    this.options = options;
+  }
 
-const uri = process.env.ATLAS_URI || "";
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
+  async connect() {
+    try {
+      await mongoose.connect(this.uri, this.options);
+      console.log(
+        `Connected to database: ${mongoose.connection.db.databaseName}`
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
 
-try {
-  await client.connect();
-  await client.db("admin").command({ ping: 1 });
-  console.log("Pinged. Wahoo! You're connected to MongoDB!!");
-} catch (err) {
-  console.error(err);
+  async disconnect() {
+    try {
+      await mongoose.disconnect();
+      console.log(
+        `Disconnected from database: ${mongoose.connection.db.databaseName}`
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
-let db = client.db("employees");
-
-export default db;
+module.exports = Database;
