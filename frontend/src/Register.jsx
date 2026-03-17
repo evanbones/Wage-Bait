@@ -10,24 +10,26 @@ function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const err = document.getElementById("error-message")
-    err.textContent = "";
+    setMessage("");
+
     if (!username || !email || !password || !confirmPassword) {
-      err.textContent = "At least one field is empty";
+      setMessage("At least one field is empty");
       return;
     }
     if (password !== confirmPassword) {
-      err.textContent = "Passwords must match";
+      setMessage("Passwords must match");
       return;
     }
     if (password.length < 8) {
-      err.textContent = "Password must be at least 8 characters long";
+      setMessage("Password must be at least 8 characters long");
       return;
     }
-    const response = fetch("http://localhost:8000/api/register", {
+
+    fetch("http://localhost:8000/api/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -37,18 +39,26 @@ function Register() {
         email,
         password,
       })
-    });
-
-    response.then((res) => res.json()).then((data) => {
+    })
+    .then((res) => res.json())
+    .then((data) => {
       console.log(data);
-      err.textContent = data.message + " " + data.receivedData.username;
+      if (data.message === "Got yer data and saved it.") {
+          localStorage.setItem('user', JSON.stringify(data.receivedData));
+          setMessage("Registration successful!");
+          // Only clear fields on success
+          setUsername("");
+          setEmail("");
+          setPassword("");
+          setConfirmPassword("");
+      } else {
+          setMessage(data.message || "Registration failed");
+      }
+    })
+    .catch((err) => {
+      console.error("Fetch error:", err);
+      setMessage("Server error. Please check if the backend is running.");
     });
-    
-    setUsername("");
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
-
   }
 
   return (
@@ -78,7 +88,9 @@ function Register() {
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
         <ActionButton className="btn-register" type="submit"> Sign Up</ActionButton>
-        <p id="error-message"></p>
+        <p id="error-message" style={{ color: message === "Registration successful!" ? "green" : "red" }}>
+          {message}
+        </p>
       </form>
     </>
   );
