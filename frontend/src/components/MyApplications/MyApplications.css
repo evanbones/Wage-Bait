@@ -1,0 +1,41 @@
+.my-applications-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 40px 40px 40px;
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 80vh;
+}
+
+.my-applications-container h1 {
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+}
+
+.application-details {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.application-details p {
+    margin: 5px 0;
+    color: #34495e;
+}
+
+.btn-view {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-view:hover {
+    background: #2980b9;
+}

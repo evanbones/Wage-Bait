@@ -1,14 +1,18 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "./JobPosting.css";
-import ActionButton from "../ActionButton/ActionButton.jsx";
 
-function JobPosting({ title, company, wage }) {
+function JobPosting({ id, title, company, wage }) {
     return (
         <div className="posting">
-            <h2 className="title">{title}</h2>
+            <Link to={`/jobs/${id}`} className="job-link">
+                <h2 className="title">{title}</h2>
+            </Link>
             <p className="company">{company}</p>
             <p className="wage">{wage}</p>
-            <ActionButton className="btn-register">Apply Now</ActionButton>
+            <Link to={`/jobs/${id}`} className="apply-link">
+                <button className="btn-apply">View Details</button>
+            </Link>
         </div>
     );
 }

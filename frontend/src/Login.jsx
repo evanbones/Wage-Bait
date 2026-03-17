@@ -23,10 +23,13 @@ function Login() {
     })
       .then(res => res.json())
       .then(data => {
-        setMessage(data.message + (data.receivedData ? " " + data.receivedData.username : ""));
         if (data.message === "Login successful") {
+          localStorage.setItem('user', JSON.stringify(data.receivedData));
+          setMessage("Login successful!");
           setUsername("");
           setPassword("");
+        } else {
+          setMessage(data.message);
         }
   })
   .catch(err => {

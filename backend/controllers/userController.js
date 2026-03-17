@@ -15,3 +15,54 @@ export async function registerUser(req, res) {
         res.status(500).json({ message: "Failed to save data" });
     }
 }
+
+export async function getProfile(req, res) {
+    const { id } = req.params;
+    try {
+        const user = await userService.getUserById(id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+export async function updateProfile(req, res) {
+    const { id } = req.params;
+    const updateData = req.body;
+    try {
+        const updatedUser = await userService.updateUserProfile(id, updateData);
+        res.status(200).json(updatedUser);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+export async function getUserApplications(req, res) {
+    try {
+        const formattedJobs = await userService.getUserApplications(req.params.id);
+        res.status(200).json(formattedJobs);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+export async function getUserPostings(req, res) {
+    try {
+        const jobs = await userService.getUserPostings(req.params.id);
+        res.status(200).json(jobs);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+export async function getAllUsers(req, res) {
+    try {
+        const users = await userService.getAllUsers();
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}

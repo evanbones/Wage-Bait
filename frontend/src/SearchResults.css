@@ -1,0 +1,178 @@
+.search-results-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.search-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: #fff;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.toolbar-filter-btn {
+    padding: 8px 16px;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #2c3e50;
+    transition: all 0.2s;
+}
+
+.toolbar-filter-btn.active {
+    background: #3498db;
+    color: white;
+    border-color: #3498db;
+}
+
+.results-count {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.search-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.search-filters-sidebar {
+    width: 250px;
+    background: #fcfcfc;
+    border-right: 1px solid #e0e0e0;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.results-sidebar {
+    width: 350px;
+    border-right: 1px solid #e0e0e0;
+    overflow-y: auto;
+    background-color: #fff;
+}
+
+.padding-20 {
+    padding: 20px;
+}
+
+.filter-group {
+    margin-bottom: 20px;
+}
+
+.filter-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #34495e;
+    font-size: 0.9rem;
+}
+
+.filter-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.category-checkboxes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #555;
+    cursor: pointer;
+}
+
+.sidebar-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-item {
+    padding: 15px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.sidebar-item:hover {
+    background-color: #f0f7ff;
+}
+
+.sidebar-item.active {
+    background-color: #e3f2fd;
+    border-left: 4px solid #3498db;
+}
+
+.sidebar-item h4 {
+    margin: 0 0 4px 0;
+    color: #2c3e50;
+    font-size: 1rem;
+}
+
+.sidebar-item p {
+    margin: 0;
+    color: #7f8c8d;
+    font-size: 0.85rem;
+}
+
+.sidebar-category {
+    font-style: italic;
+    font-size: 0.8rem !important;
+}
+
+.sidebar-salary {
+    margin-top: 6px !important;
+    font-weight: bold;
+    color: #27ae60 !important;
+}
+
+.details-view {
+    flex: 1;
+    overflow-y: auto;
+    background-color: #fff;
+}
+
+.no-selection, .no-results {
+    padding: 40px;
+    text-align: center;
+    color: #95a5a6;
+    font-size: 1.1rem;
+}
+
+@media (max-width: 1000px) {
+    .results-sidebar {
+        width: 250px;
+    }
+}
+
+@media (max-width: 800px) {
+    .search-container {
+        flex-direction: column;
+    }
+    
+    .results-sidebar {
+        width: 100%;
+        height: 300px;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .search-filters-sidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+    }
+}
