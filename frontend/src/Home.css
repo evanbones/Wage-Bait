@@ -23,7 +23,7 @@
 .filters-sidebar h3 {
     margin-bottom: 25px;
     color: #2c3e50;
-    border-bottom: 2px solid #3498db;
+    border-bottom: 2px solid #9abddc;
     padding-bottom: 10px;
 }
 
@@ -107,7 +107,7 @@
 }
 
 .hero-search-btn {
-    background-color: #3498db;
+    background-color: black;
     color: white;
     border: none;
     padding: 15px 40px;
@@ -119,11 +119,11 @@
 }
 
 .hero-search-btn:hover {
-    background-color: #2980b9;
+    background-color: #d1e5f4;
 }
 
 .filters-toggle-btn {
-    background: #ecf0f1;
+    background: white;
     color: #2c3e50;
     border: 1px solid #bdc3c7;
     padding: 10px 20px;
@@ -134,9 +134,9 @@
 }
 
 .filters-toggle-btn.active {
-    background: #3498db;
-    color: white;
-    border-color: #3498db;
+    background: #d1e5f4;
+    color: black;
+    border-color: #9abddc;
 }
 
 @media (max-width: 768px) {

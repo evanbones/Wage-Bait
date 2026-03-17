@@ -2,7 +2,7 @@
     max-width: 800px;
     margin: 40px auto;
     padding: 30px;
-    background-color: #fff;
+    background-color: #f9f8f4;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -13,7 +13,7 @@
     font-size: 2.5rem;
     margin-bottom: 20px;
     color: #2c3e50;
-    border-bottom: 2px solid #3498db;
+    border-bottom: 2px solid #9abddc;
     padding-bottom: 10px;
 }
 
@@ -33,7 +33,7 @@
 }
 
 .job-info strong {
-    color: #2980b9;
+    color: #9abddc;
 }
 
 .job-description {
@@ -87,7 +87,7 @@
 }
 
 .apply-button {
-    background-color: #27ae60;
+    background-color: black;
     color: white;
     border: none;
     padding: 14px 28px;
@@ -99,7 +99,7 @@
 }
 
 .apply-button:hover {
-    background-color: #219150;
+    background-color: #d1e5f4;
     transform: translateY(-2px);
 }
 
