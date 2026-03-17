@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
-import { searchJobs } from "./controllers/searchController.js";
-import { registerUser } from "./controllers/userController.js";
+import { searchJobs, getJobById, submitBid, createJob, updateJob, deleteJob } from "./controllers/searchController.js";
+import { registerUser, getProfile, updateProfile, getUserApplications, getUserPostings, getAllUsers } from "./controllers/userController.js";
 import { loginUser } from "./controllers/loginController.js";
 import Database from "./db/connection.js";
 
@@ -20,7 +20,31 @@ app.use(express.json());
 // Routes
 app.post("/api/register", registerUser);
 app.get("/api/search", searchJobs);
+app.get("/api/jobs/:id", getJobById);
+app.post("/api/jobs/bid", submitBid);
 app.post("/api/login", loginUser);
+
+// profile routes
+app.get("/api/users/:id", getProfile);
+app.put("/api/users/:id", updateProfile);
+
+// get jobs applied to by user
+app.get("/api/users/:id/applications", getUserApplications);
+
+// get postings by user
+app.get("/api/users/:id/postings", getUserPostings);
+
+// job Creation route
+app.post("/api/jobs", createJob);
+
+// admin routes (more to be added)
+app.get("/api/admin/users", getAllUsers);
+
+// delete a job
+app.delete("/api/jobs/:id", deleteJob);
+
+// update a job
+app.put("/api/jobs/:id", updateJob);
 
 app.listen(PORT, () => {
   console.log(`Express running on http://localhost:${PORT}`);
