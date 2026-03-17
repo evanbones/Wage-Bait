@@ -3,6 +3,7 @@ import { InfoBox } from "./components/InfoBox/InfoBox.jsx";
 import ActionButton from "./components/ActionButton/ActionButton.jsx";
 import "./Register.css";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 function Register() {
@@ -11,6 +12,7 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -51,6 +53,8 @@ function Register() {
           setEmail("");
           setPassword("");
           setConfirmPassword("");
+
+          navigate("/")
       } else {
           setMessage(data.message || "Registration failed");
       }
