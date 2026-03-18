@@ -6,7 +6,7 @@ export async function registerUser(req, res) {
 
     try {
         const savedUser = await userService.saveUser(newUser);
-        res.status(200).json({
+        res.status(201).json({
             message: "Got yer data and saved it.",
             receivedData: savedUser
         });
