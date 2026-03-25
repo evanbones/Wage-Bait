@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from '../Header/Header';
 import './Profile.css';
+import { useRef} from 'react';
+import { InfoBox } from '../InfoBox/InfoBox';
 
 const SkillItem = ({ skill, onRemove }) => (
   <div className="skill-tag">
@@ -27,6 +29,54 @@ const EducationItem = ({ edu, onRemove, index }) => (
 );
 
 const Profile = () => {
+
+  const dialogRef = useRef(null);
+
+  const openPopup = () => dialogRef.current.showModal();
+  const closePopup = () => dialogRef.current.close();
+  const [PFPFile, setPFPFile] = useState(null);
+  const [previewPFP, setPreviewPFP] = useState(null);
+  
+  const handlePFPChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 8 * 1024 * 1024) {
+        alert("Picture must be smaller than 8MB");
+        e.target.value = null;
+        return;
+      }
+      setPFPFile(file);
+      setPreviewPFP(URL.createObjectURL(file));
+    }
+  };
+
+ const handlePFPUpload = async () => {
+ 
+  
+  console.log('handlePFPUpload called');
+  console.log('PFPFile:', PFPFile);
+
+
+  if (!PFPFile) return;
+
+  const reader = new FileReader();
+  reader.readAsDataURL(PFPFile);
+  reader.onloadend = async () => {
+    console.log('onloadend fired');
+    console.log('reader.result length:', reader.result?.length);
+    const photodata = reader.result;
+    try {
+      await handleUpdate({ profilePic: photodata });
+      setPreviewPFP(null);
+      setPFPFile(null);
+      closePopup();
+    } catch (e) {
+      console.error("Upload Failed:", e);
+    }
+ }
+
+ }
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -151,7 +201,25 @@ const Profile = () => {
       <div className="profile-header">
         <div className="profile-pic-mock">
           {user.profilePic ? <img src={user.profilePic} alt="Profile" /> : "No Photo"}
-          <button className="upload-btn">Upload Photo (Mock)</button>
+          <button onClick={openPopup} className="upload-btn">Upload Photo (Mock)</button>
+          <dialog ref={dialogRef} className="pfp-popup">
+            <p> Upload Profile Picture</p>
+
+            <input type="file" accept="image/*" onChange={handlePFPChange} className="pfp-input" />
+
+            {previewPFP && <img src={previewPFP} alt="Preview" className="pfp-preview" />}
+            <div>
+              <button onClick={handlePFPUpload}> Upload</button>
+              <button onClick={() => {
+                if (previewPFP){
+                  URL.revokeObjectURL(previewPFP);
+                }
+                setPreviewPFP(null);
+                setPFPFile(null);
+                closePopup();
+              }}>Cancel</button>
+            </div>
+          </dialog>
         </div>
         <div className="user-info-main">
           <h2>{user.username}</h2>
