@@ -31,7 +31,7 @@ const EditJob = () => {
         if (!response.ok) throw new Error('Failed to fetch job details');
         const data = await response.json();
         
-        // Security check: ensure current user owns this job
+        // ensure current user owns this job
         if (data.postedBy !== (user._id || user.id)) {
             navigate('/my-postings');
             return;
