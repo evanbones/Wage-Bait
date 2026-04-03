@@ -1,242 +1,245 @@
 .my-postings-container {
-    max-width: 1100px;
-    margin: 40px auto;
-    padding: 0 40px 40px 40px;
-    font-family: 'Segoe UI', sans-serif;
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 40px 40px 40px;
+  font-family: "Segoe UI", sans-serif;
 }
 
 .postings-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 .btn-create-small {
-    background-color: #27ae60;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .job-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
 }
 
 .job-actions {
-    display: flex;
-    gap: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 .btn-edit {
-    background: #f39c12;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    cursor: pointer;
+  background: #f39c12;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .btn-delete {
-    background: #e74c3c;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    cursor: pointer;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-.btn-edit:hover { background: #e67e22; }
-.btn-delete:hover { background: #c0392b; }
+.btn-edit:hover {
+  background: #e67e22;
+}
+.btn-delete:hover {
+  background: #c0392b;
+}
 
 .my-postings-container h1 {
-    color: #2c3e50;
-    border-bottom: 2px solid #3498db;
-    padding-bottom: 10px;
-    margin-bottom: 30px;
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+  margin-bottom: 30px;
 }
 
 .job-card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    padding: 25px;
-    margin-bottom: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  padding: 25px;
+  margin-bottom: 30px;
 }
 
 .job-card h2 {
-    margin: 0;
-    color: #2980b9;
+  margin: 0;
+  color: #2980b9;
 }
 
 .job-meta {
-    color: #7f8c8d;
-    margin: 5px 0 20px 0;
+  color: #7f8c8d;
+  margin: 5px 0 20px 0;
 }
 
 .bids-section {
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 8px;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
 }
 
 .bids-section h3 {
-    margin-top: 0;
-    font-size: 1.1rem;
-    color: #34495e;
+  margin-top: 0;
+  font-size: 1.1rem;
+  color: #34495e;
 }
 
 .no-bids {
-    color: #95a5a6;
-    font-style: italic;
+  color: #95a5a6;
+  font-style: italic;
 }
 
 .bids-list {
-    list-style: none;
-    padding: 0;
+  list-style: none;
+  padding: 0;
 }
 
 .bid-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .bid-item:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .bidder-info {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .bidder-info strong {
-    color: #2c3e50;
+  color: #2c3e50;
 }
 
 .bidder-info span {
-    font-size: 0.85rem;
-    color: #7f8c8d;
+  font-size: 0.85rem;
+  color: #7f8c8d;
 }
 
 .clickable-name {
-    color: #3498db;
-    cursor: pointer;
-    text-decoration: underline;
+  color: #3498db;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .clickable-name:hover {
-    color: #2980b9;
+  color: #2980b9;
 }
 
-/* Modal Styles */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 .modal-content {
-    background: white;
-    width: 90%;
-    max-width: 600px;
-    max-height: 80vh;
-    border-radius: 12px;
-    padding: 30px;
-    position: relative;
-    overflow-y: auto;
+  background: white;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  border-radius: 12px;
+  padding: 30px;
+  position: relative;
+  overflow-y: auto;
 }
 
 .close-modal {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    font-size: 2rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #95a5a6;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #95a5a6;
 }
 
 .applicant-header {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-    margin-bottom: 30px;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 20px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 20px;
 }
 
 .applicant-pic-mock {
-    width: 80px;
-    height: 80px;
-    background: #eee;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+  width: 80px;
+  height: 80px;
+  background: #eee;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
 .applicant-pic-mock img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .applicant-details-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
 }
 
 .applicant-details-grid h3 {
-    margin-top: 0;
-    font-size: 1.1rem;
-    color: #2c3e50;
-    border-bottom: 1px solid #f0f0f0;
-    padding-bottom: 5px;
+  margin-top: 0;
+  font-size: 1.1rem;
+  color: #2c3e50;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 5px;
 }
 
 .skills-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .skill-tag-small {
-    background: #e1f5fe;
-    color: #0288d1;
-    padding: 4px 10px;
-    border-radius: 15px;
-    font-size: 0.85rem;
+  background: #e1f5fe;
+  color: #0288d1;
+  padding: 4px 10px;
+  border-radius: 15px;
+  font-size: 0.85rem;
 }
 
 .detail-item-small {
-    margin-bottom: 12px;
-    padding: 10px;
-    background: #f9f9f9;
-    border-radius: 6px;
+  margin-bottom: 12px;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 6px;
 }
 
 .detail-item-small p {
-    margin: 5px 0 0 0;
-    font-size: 0.9rem;
-    color: #7f8c8d;
+  margin: 5px 0 0 0;
+  font-size: 0.9rem;
+  color: #7f8c8d;
 }

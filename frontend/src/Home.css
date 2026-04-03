@@ -15,7 +15,7 @@
     background-color: #f8f9fa;
     border-right: 1px solid #e0e0e0;
     padding: 30px 20px;
-    height: calc(100vh - 80px); /* Adjust based on Header height */
+    height: calc(100vh - 80px);
     position: fixed;
     top: 80px;
 }

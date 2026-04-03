@@ -100,11 +100,6 @@
 
 .apply-button:hover {
     background-color: #d1e5f4;
-    transform: translateY(-2px);
-}
-
-.apply-button:active {
-    transform: translateY(0);
 }
 
 .success-message {
