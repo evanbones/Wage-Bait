@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import Header from "./components/Header/Header";
-import JobDetails from "./components/JobDetails/JobDetails";
+import Header from "../../components/Header/Header";
+import JobDetails from "../../components/JobDetails/JobDetails";
 import "./SearchResults.css";
 
 function SearchResults() {

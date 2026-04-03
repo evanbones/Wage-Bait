@@ -1,16 +1,16 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
-import Register from "./Register.jsx";
-import Home from "./Home.jsx";
-import Login from "./Login.jsx";
-import SearchResults from "./SearchResults.jsx";
-import JobDetails from "./components/JobDetails/JobDetails.jsx";
-import Profile from "./components/Profile/Profile.jsx";
-import CreateJob from "./components/CreateJob/CreateJob.jsx";
-import Admin from "./components/Admin/Admin.jsx";
-import MyPostings from "./components/MyPostings/MyPostings.jsx";
-import MyApplications from "./components/MyApplications/MyApplications.jsx";
-import EditJob from "./components/EditJob/EditJob.jsx";
+import Register from "../Register/Register.jsx";
+import Home from "../Home/Home.jsx";
+import Login from "../Login/Login.jsx";
+import SearchResults from "../SearchResults/SearchResults.jsx";
+import JobDetails from "../../components/JobDetails/JobDetails.jsx";
+import Profile from "../../components/Profile/Profile.jsx";
+import CreateJob from "../../components/CreateJob/CreateJob.jsx";
+import Admin from "../../components/Admin/Admin.jsx";
+import MyPostings from "../../components/MyPostings/MyPostings.jsx";
+import MyApplications from "../../components/MyApplications/MyApplications.jsx";
+import EditJob from "../../components/EditJob/EditJob.jsx";
 
 function App() {
   return (

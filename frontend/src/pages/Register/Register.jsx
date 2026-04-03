@@ -1,6 +1,6 @@
-import Header from "./components/Header/Header.jsx";
-import { InfoBox } from "./components/InfoBox/InfoBox.jsx";
-import ActionButton from "./components/ActionButton/ActionButton.jsx";
+import Header from "../../components/Header/Header.jsx";
+import { InfoBox } from "../../components/InfoBox/InfoBox.jsx";
+import ActionButton from "../../components/ActionButton/ActionButton.jsx";
 import "./Register.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
