@@ -130,20 +130,27 @@
 
 .skill-tag {
   background: #ecf0f1;
-  padding: 6px 12px;
+  padding: 0.6em 1.2em 0.6em 1.4em;
   border-radius: 20px;
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 0.9rem;
+  transition: 0.2s all;
 }
 
-.skill-tag button {
+.skill-tag #close {
   background: none;
   border: none;
   color: #e74c3c;
   cursor: pointer;
+  margin-left: 0.2em;
   font-weight: bold;
+  transition: 0.2s all;
+}
+
+.skill-tag #close:hover {
+  rotate: 90deg;
 }
 
 .profile-item {
