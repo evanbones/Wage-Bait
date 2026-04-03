@@ -253,7 +253,7 @@ const Profile = () => {
               "No Photo"
             )}
             <button onClick={openPopup} className="upload-btn">
-              Upload Photo (Mock)
+              Upload Photo
             </button>
             <dialog ref={dialogRef} className="pfp-popup">
               <p> Upload Profile Picture</p>

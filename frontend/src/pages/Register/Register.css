@@ -1,8 +1,8 @@
 .register-container {
   display: flex;
   flex-direction: column;
-  gap: 30px;
-  padding: 50px;
+  gap: 15px;
+  padding: 45px;
   position: absolute;
   top: 55%;
   left: 50%;
@@ -12,4 +12,17 @@
   border-radius: 12px;
   background-color: #d1e5f4;
   border: 1px solid #9abddc;
+}
+.profile-pic-container {
+  width: 90px;
+  height: 90px;
+  background-color: #e0e0e0;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  border: 3px solid #9abddc;
 }
