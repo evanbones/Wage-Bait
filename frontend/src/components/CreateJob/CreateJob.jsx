@@ -147,7 +147,7 @@ const CreateJob = () => {
             </div>
 
             <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100">
-              <div className="relative inline-flex items-center cursor-pointer">
+              <label className="relative inline-flex items-center cursor-pointer">
                 <input 
                   type="checkbox" 
                   className="sr-only peer"
@@ -155,7 +155,7 @@ const CreateJob = () => {
                   onChange={e => setJobData({...jobData, remote: e.target.checked})} 
                 />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-accent"></div>
-              </div>
+              </label>
               <label className="text-sm font-medium text-brand-primary flex items-center gap-2">
                 <Globe className="w-4 h-4" /> Remote Position
               </label>

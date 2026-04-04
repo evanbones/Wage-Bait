@@ -81,7 +81,7 @@ const Comments = ({ jobId, comments: initialComments, onCommentAdded }) => {
             {/* comments list */}
             <div className="space-y-6">
                 {comments.length === 0 ? (
-                    <p className="text-brand-secondary italic">No comments yet. Be the first to start the conversation!</p>
+                    <p className="text-brand-secondary italic">No comments yet. Leave a message!</p>
                 ) : (
                     comments.slice().reverse().map((comment, index) => (
                         <div key={comment._id || index} className="flex gap-4 p-4 bg-brand-surface rounded-xl shadow-sm border border-brand-secondary/10">

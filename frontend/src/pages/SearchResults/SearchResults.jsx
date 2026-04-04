@@ -215,7 +215,7 @@ function SearchResults() {
               <div className="w-20 h-20 bg-brand-surface rounded-full flex items-center justify-center mb-6 shadow-xl">
                 <Briefcase size={40} className="text-brand-accent" />
               </div>
-              <h3 className="text-2xl font-serif text-brand-primary mb-2">Ready to explore?</h3>
+              <h3 className="text-2xl font-serif text-brand-primary mb-2">Ready to get hired?</h3>
               <p className="text-brand-secondary max-w-xs mx-auto">Select a job from the list to view its full description and application details.</p>
             </div>
           )}

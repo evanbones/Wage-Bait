@@ -129,9 +129,9 @@ const Home = () => {
             {/* feature cards */}
             <div className="grid md:grid-cols-3 gap-8 mt-20">
               {[
-                { icon: Briefcase, title: "Verified Listings", desc: "Every job posting is vetted to ensure quality and transparency." },
-                { icon: TrendingUp, title: "Salary Insights", desc: "Compare your offers with real market data from our community." },
-                { icon: Users, title: "Community Driven", desc: "Join thousands of users sharing their interview experiences." }
+                { icon: Briefcase, title: "Verified Listings", desc: "Every job posting is definitely super real and verified to ensure quality." },
+                { icon: TrendingUp, title: "Profile Insights", desc: "Compare your profile with other real users from our community." },
+                { icon: Users, title: "Community Driven", desc: "Join thousands of other wage baiters searching for new experiences!" }
               ].map((feature, i) => (
                 <div key={i} className="bg-brand-surface/50 backdrop-blur-sm p-8 rounded-3xl border border-brand-secondary/10 hover:border-brand-accent/50 transition-colors group">
                   <div className="bg-brand-surface w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-primary/5 mb-6 group-hover:scale-110 transition-transform">
@@ -156,9 +156,6 @@ const Home = () => {
                 <h2 className="text-4xl font-serif text-brand-primary mb-4">Browse by Category</h2>
                 <p className="text-brand-secondary">Explore opportunities across different industries.</p>
               </div>
-              <button className="text-brand-primary font-bold flex items-center gap-1 hover:gap-2 transition-all">
-                View all <ChevronRight size={20} />
-              </button>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
               {categories.map((cat) => (

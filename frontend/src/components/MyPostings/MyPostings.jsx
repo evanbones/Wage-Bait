@@ -183,7 +183,7 @@ const MyPostings = () => {
                     </div>
                     <button 
                         onClick={() => navigate('/create-job')}
-                        className="flex items-center gap-2 bg-brand-accent text-brand-primary px-8 py-4 rounded-2xl font-bold hover:shadow-lg hover:shadow-brand-accent/20 transition-all transform hover:-translate-y-1"
+                        className="flex items-center gap-2 bg-brand-accent text-brand-primary px-8 py-4 rounded-2xl font-bold hover:shadow-lg hover:shadow-brand-accent/20 transition-all"
                     >
                         <Plus size={20} />
                         <span>Create New Job</span>

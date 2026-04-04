@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { X, Camera, Plus, Trash2, Briefcase, GraduationCap, Star, Settings, ExternalLink, User } from "lucide-react";
+import { X, Camera, Plus, Trash2, Briefcase, GraduationCap, Star, Settings, User } from "lucide-react";
 import Header from "../Header/Header";
 import ActionButton from "../ActionButton/ActionButton";
 
@@ -44,7 +44,7 @@ const EducationItem = ({ edu, onRemove, index }) => (
 );
 
 const Profile = () => {
-  const dialogRef = useRef(null);
+  const [showPopup, setShowPopup] = useState(false);
   const [PFPFile, setPFPFile] = useState(null);
   const [previewPFP, setPreviewPFP] = useState(null);
   const [user, setUser] = useState(null);
@@ -60,8 +60,12 @@ const Profile = () => {
   const navigate = useNavigate();
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
 
-  const openPopup = () => dialogRef.current.showModal();
-  const closePopup = () => dialogRef.current.close();
+  const openPopup = () => setShowPopup(true);
+  const closePopup = () => {
+    setShowPopup(false);
+    setPreviewPFP(null);
+    setPFPFile(null);
+  };
 
   useEffect(() => {
     if (!loggedInUser) {
@@ -126,8 +130,6 @@ const Profile = () => {
       const photodata = reader.result;
       try {
         await handleUpdate({ profilePic: photodata });
-        setPreviewPFP(null);
-        setPFPFile(null);
         closePopup();
       } catch (e) {
         console.error("Upload Failed:", e);
@@ -167,7 +169,6 @@ const Profile = () => {
       <Header />
       
       <main className="max-w-5xl mx-auto px-4 py-12">
-        {/* profile header card */}
         <div className="bg-brand-surface rounded-3xl p-8 md:p-12 shadow-xl shadow-brand-primary/5 border border-brand-secondary/10 mb-12">
             <div className="flex flex-col md:flex-row items-center gap-10">
                 <div className="relative group">
@@ -211,12 +212,11 @@ const Profile = () => {
         )}
 
         <div className="grid lg:grid-cols-3 gap-12">
-            {/* left sidebar: account settings & skills */}
             <div className="lg:col-span-1 space-y-12">
                 <section>
                     <div className="flex items-center gap-2 mb-6">
                         <Settings className="text-brand-accent" size={24} />
-                        <h2 className="font-bold text-brand-primary uppercase tracking-widest text-sm">Account Settings</h2>
+                        <h2 className="text-xl font-bold text-brand-primary uppercase tracking-widest text-sm">Account Settings</h2>
                     </div>
                     <form onSubmit={handleAccountUpdate} className="space-y-4">
                         <div className="space-y-1">
@@ -263,7 +263,7 @@ const Profile = () => {
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-2">
                             <Star className="text-brand-accent" size={24} />
-                            <h2 className="font-bold text-brand-primary uppercase tracking-widest text-sm">Skills</h2>
+                            <h2 className="text-xl font-bold text-brand-primary uppercase tracking-widest text-sm">Skills</h2>
                         </div>
                     </div>
                     <div className="flex flex-wrap gap-2 mb-6">
@@ -292,13 +292,12 @@ const Profile = () => {
                 </section>
             </div>
 
-            {/* main content: experience & education */}
             <div className="lg:col-span-2 space-y-12">
                 <section>
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-2">
                             <Briefcase className="text-brand-accent" size={24} />
-                            <h2 className="font-bold text-brand-primary uppercase tracking-widest text-sm">Experience</h2>
+                            <h2 className="text-xl font-bold text-brand-primary uppercase tracking-widest text-sm">Experience</h2>
                         </div>
                     </div>
                     
@@ -342,7 +341,7 @@ const Profile = () => {
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-2">
                             <GraduationCap className="text-brand-accent" size={24} />
-                            <h2 className="font-bold text-brand-primary uppercase tracking-widest text-sm">Education</h2>
+                            <h2 className="text-xl font-bold text-brand-primary uppercase tracking-widest text-sm">Education</h2>
                         </div>
                     </div>
 
@@ -384,48 +383,48 @@ const Profile = () => {
         </div>
       </main>
 
-      {/* profile picture popup */}
-      <dialog ref={dialogRef} className="bg-brand-surface rounded-3xl p-8 shadow-2xl backdrop:bg-brand-primary/40 backdrop:backdrop-blur-sm max-w-sm w-full outline-none">
-        <div className="text-center">
-            <h3 className="text-xl font-serif mb-6 text-brand-primary">Update Profile Picture</h3>
-            
-            <div className="relative w-32 h-32 mx-auto mb-8 bg-brand-background rounded-3xl overflow-hidden border border-brand-secondary/10">
-                {previewPFP ? (
-                    <img src={previewPFP} alt="Preview" className="w-full h-full object-cover" />
-                ) : user.profilePic ? (
-                    <img src={user.profilePic} alt="Current" className="w-full h-full object-cover opacity-50" />
-                ) : (
-                    <div className="w-full h-full flex items-center justify-center text-brand-secondary/20">
-                        <User size={48} />
-                    </div>
-                )}
-                <label className="absolute inset-0 flex items-center justify-center cursor-pointer bg-brand-primary/0 hover:bg-brand-primary/20 transition-colors group">
-                    <input type="file" accept="image/*" onChange={handlePFPChange} className="hidden" />
-                    <Camera size={24} className="text-brand-surface opacity-0 group-hover:opacity-100 transition-opacity" />
-                </label>
-            </div>
+      {/* Profile Picture Popup - Custom Modal implementation for better cross-browser compatibility */}
+      {showPopup && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-brand-primary/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={closePopup}>
+          <div className="bg-brand-surface rounded-3xl p-8 shadow-2xl max-w-sm w-full outline-none animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+            <div className="text-center">
+                <h3 className="text-xl font-serif mb-6 text-brand-primary">Update Profile Picture</h3>
+                
+                <div className="relative w-32 h-32 mx-auto mb-8 bg-brand-background rounded-3xl overflow-hidden border border-brand-secondary/10">
+                    {previewPFP ? (
+                        <img src={previewPFP} alt="Preview" className="w-full h-full object-cover" />
+                    ) : user.profilePic ? (
+                        <img src={user.profilePic} alt="Current" className="w-full h-full object-cover opacity-50" />
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center text-brand-secondary/20">
+                            <User size={48} />
+                        </div>
+                    )}
+                    <label className="absolute inset-0 flex items-center justify-center cursor-pointer bg-brand-primary/0 hover:bg-brand-primary/20 transition-colors group">
+                        <input type="file" accept="image/*" onChange={handlePFPChange} className="hidden" />
+                        <Camera size={24} className="text-brand-surface opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </label>
+                </div>
 
-            <div className="space-y-3">
-                <button 
-                    onClick={handlePFPUpload}
-                    disabled={!PFPFile}
-                    className="w-full py-3 bg-brand-primary text-brand-surface rounded-xl font-bold hover:bg-brand-secondary disabled:opacity-50 transition-all shadow-md"
-                >
-                    Upload Photo
-                </button>
-                <button 
-                    onClick={() => {
-                        setPreviewPFP(null);
-                        setPFPFile(null);
-                        closePopup();
-                    }}
-                    className="w-full py-3 text-brand-secondary font-bold hover:text-brand-primary transition-colors"
-                >
-                    Cancel
-                </button>
+                <div className="space-y-3">
+                    <button 
+                        onClick={handlePFPUpload}
+                        disabled={!PFPFile}
+                        className="w-full py-3 bg-brand-primary text-brand-surface rounded-xl font-bold hover:bg-brand-secondary disabled:opacity-50 transition-all shadow-md"
+                    >
+                        Upload Photo
+                    </button>
+                    <button 
+                        onClick={closePopup}
+                        className="w-full py-3 text-brand-secondary font-bold hover:text-brand-primary transition-colors"
+                    >
+                        Cancel
+                    </button>
+                </div>
             </div>
+          </div>
         </div>
-      </dialog>
+      )}
     </div>
   );
 };
