@@ -12,21 +12,21 @@ const ButtonContainer = () => {
   };
 
   return (
-    <div style={{ display: "flex", gap: "1rem" }}>
+    <div className="flex items-center gap-3">
       {user ? (
         <>
           <Link to="/profile">
-            <ActionButton className="btn-login">Profile</ActionButton>
+            <ActionButton variant="outline">Profile</ActionButton>
           </Link>
-          <ActionButton className="btn-register" onClick={handleLogout}>Logout</ActionButton>
+          <ActionButton variant="primary" onClick={handleLogout}>Logout</ActionButton>
         </>
       ) : (
         <>
           <Link to="/login">
-            <ActionButton className="btn-login">Login</ActionButton>
+            <ActionButton variant="outline">Login</ActionButton>
           </Link>
           <Link to="/register">
-            <ActionButton className="btn-register">Sign Up</ActionButton>
+            <ActionButton variant="primary">Sign Up</ActionButton>
           </Link>
         </>
       )}

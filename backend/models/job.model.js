@@ -58,7 +58,26 @@ const jobSchema = new Schema(
             ref: 'User',
             required: true
         },
-        bids: [bidSchema]
+        bids: [bidSchema],
+        comments: [
+            {
+                userId: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'User',
+                    required: true
+                },
+                username: String,
+                profilePic: String,
+                text: {
+                    type: String,
+                    required: true
+                },
+                createdAt: {
+                    type: Date,
+                    default: Date.now
+                }
+            }
+        ]
     }
 );
 

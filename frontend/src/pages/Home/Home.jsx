@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Search, Filter, X, ChevronRight, Briefcase, TrendingUp, Users } from "lucide-react";
 import Header from "../../components/Header/Header.jsx";
 import Footer from "../../components/Footer/Footer.jsx";
-import "./Home.css";
 
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -40,63 +40,141 @@ const Home = () => {
   };
 
   return (
-    <div className="home-wrapper">
+    <div className="flex flex-col min-h-screen bg-brand-background">
       <Header />
-      <div className={`home-main ${showFilters ? "with-sidebar" : ""}`}>
-        {showFilters && (
-          <aside className="filters-sidebar">
-            <h3>Filters</h3>
-            <div className="filter-group">
-              <label>Min Salary ($)</label>
-              <input
-                type="number"
-                value={minSalary}
-                onChange={(e) => setMinSalary(e.target.value)}
-                placeholder="e.g. 50000"
-              />
-            </div>
-            <div className="filter-group">
-              <label>Categories</label>
-              <div className="category-checkboxes">
-                {categories.map((cat) => (
-                  <label key={cat} className="checkbox-label">
+      
+      <main className="grow">
+        {/* hero section */}
+        <section className="relative pt-20 pb-32 overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center max-w-3xl mx-auto mb-12">
+              <h1 className="text-6xl md:text-7xl font-serif text-brand-primary mb-6 leading-tight">
+                Find Your Next <span className="text-brand-accent italic">Great</span> Opportunity
+              </h1>
+              <p className="text-xl text-brand-secondary font-medium mb-10">
+                Don't just apply. Negotiate the life you deserve.
+              </p>
+
+              <div className="bg-brand-surface p-2 rounded-3xl shadow-2xl shadow-brand-primary/10 border border-brand-secondary/10">
+                <form className="flex flex-col md:flex-row gap-2" onSubmit={handleSearch}>
+                  <div className="flex-1 relative group">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-secondary/50 group-focus-within:text-brand-accent transition-colors" />
                     <input
-                      type="checkbox"
-                      checked={selectedCategories.includes(cat)}
-                      onChange={() => handleCategoryChange(cat)}
+                      type="text"
+                      placeholder="Job title, company, or keywords..."
+                      className="w-full py-4 pl-12 pr-4 rounded-2xl bg-brand-background/50 border-none focus:ring-2 focus:ring-brand-accent outline-none font-medium transition-all"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    {cat}
-                  </label>
-                ))}
+                  </div>
+                  <button 
+                    type="button" 
+                    onClick={() => setShowFilters(!showFilters)}
+                    className={`flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold transition-all ${
+                        showFilters 
+                        ? "bg-brand-accent-light text-brand-primary" 
+                        : "bg-brand-background text-brand-secondary hover:bg-brand-secondary/10"
+                    }`}
+                  >
+                    <Filter size={20} />
+                    <span>Filters</span>
+                  </button>
+                  <button 
+                    type="submit" 
+                    className="bg-brand-primary text-brand-surface px-10 py-4 rounded-2xl font-bold hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/20"
+                  >
+                    Search Jobs
+                  </button>
+                </form>
+
+                {/* filters dropdown/sidebar */}
+                {showFilters && (
+                  <div className="mt-4 p-6 border-t border-brand-secondary/10 text-left animate-in fade-in slide-in-from-top-4 duration-300">
+                    <div className="grid md:grid-cols-2 gap-8">
+                      <div>
+                        <label className="block text-sm font-bold text-brand-primary mb-3">Minimum Annual Salary ($)</label>
+                        <input
+                          type="number"
+                          value={minSalary}
+                          onChange={(e) => setMinSalary(e.target.value)}
+                          placeholder="e.g. 80000"
+                          className="w-full p-3 bg-brand-background rounded-xl border border-brand-secondary/20 focus:ring-2 focus:ring-brand-accent outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-bold text-brand-primary mb-3">Popular Categories</label>
+                        <div className="flex flex-wrap gap-2">
+                          {categories.map((cat) => (
+                            <button
+                              key={cat}
+                              type="button"
+                              onClick={() => handleCategoryChange(cat)}
+                              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                                selectedCategories.includes(cat)
+                                  ? "bg-brand-primary text-brand-surface"
+                                  : "bg-brand-background text-brand-secondary hover:bg-brand-secondary/20 border border-brand-secondary/10"
+                              }`}
+                            >
+                              {cat}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
-          </aside>
-        )}
 
-        <section className="hero-section">
-          <h1>Find Your Next Great Opportunity</h1>
-          <p>Don't just apply. Negotiate the life you deserve.</p>
-          
-          <form className="hero-search-form" onSubmit={handleSearch}>
-            <div className="search-bar-group">
-              <input
-                type="text"
-                placeholder="Job title, company, or keywords..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <button type="submit" className="hero-search-btn">Search</button>
+            {/* feature cards */}
+            <div className="grid md:grid-cols-3 gap-8 mt-20">
+              {[
+                { icon: Briefcase, title: "Verified Listings", desc: "Every job posting is vetted to ensure quality and transparency." },
+                { icon: TrendingUp, title: "Salary Insights", desc: "Compare your offers with real market data from our community." },
+                { icon: Users, title: "Community Driven", desc: "Join thousands of users sharing their interview experiences." }
+              ].map((feature, i) => (
+                <div key={i} className="bg-brand-surface/50 backdrop-blur-sm p-8 rounded-3xl border border-brand-secondary/10 hover:border-brand-accent/50 transition-colors group">
+                  <div className="bg-brand-surface w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-primary/5 mb-6 group-hover:scale-110 transition-transform">
+                    <feature.icon className="text-brand-accent w-7 h-7" />
+                  </div>
+                  <h3 className="text-xl font-bold text-brand-primary mb-3">{feature.title}</h3>
+                  <p className="text-brand-secondary leading-relaxed">{feature.desc}</p>
+                </div>
+              ))}
             </div>
-            <button 
-              type="button" 
-              className={`filters-toggle-btn ${showFilters ? "active" : ""}`}
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              {showFilters ? "Hide Filters" : "Show Filters"}
-            </button>
-          </form>
+          </div>
+
+          <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[600px] h-[600px] bg-brand-accent/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-brand-accent-light/10 rounded-full blur-3xl pointer-events-none" />
         </section>
-      </div>
+
+        {/* categories grid */}
+        <section className="py-20 bg-brand-surface/30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-end mb-12">
+              <div>
+                <h2 className="text-4xl font-serif text-brand-primary mb-4">Browse by Category</h2>
+                <p className="text-brand-secondary">Explore opportunities across different industries.</p>
+              </div>
+              <button className="text-brand-primary font-bold flex items-center gap-1 hover:gap-2 transition-all">
+                View all <ChevronRight size={20} />
+              </button>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => navigate(`/search?categories=${cat}`)}
+                  className="bg-brand-surface p-6 rounded-2xl text-center border border-brand-secondary/5 hover:border-brand-accent hover:shadow-xl hover:shadow-brand-primary/5 transition-all group"
+                >
+                  <div className="font-bold text-brand-primary group-hover:text-brand-accent transition-colors">{cat}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
+      
       <Footer />
     </div>
   );

@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { searchJobs, getJobById, submitBid, createJob, updateJob, deleteJob } from "./controllers/searchController.js";
+import { searchJobs, getJobById, submitBid, addComment, createJob, updateJob, deleteJob } from "./controllers/searchController.js";
 import { registerUser, getProfile, updateProfile, getUserApplications, getUserPostings, getAllUsers } from "./controllers/userController.js";
 import { loginUser } from "./controllers/loginController.js";
 import Database from "./db/connection.js";
@@ -15,13 +15,14 @@ db.connect().catch((err) =>
 );
 
 app.use(cors());
-app.use(express.json({ limit: "10mb" })); // increase limit for pfps
+app.use(express.json({ limit: "10mb" }));
 
 // Routes
 app.post("/api/register", registerUser);
 app.get("/api/search", searchJobs);
 app.get("/api/jobs/:id", getJobById);
 app.post("/api/jobs/bid", submitBid);
+app.post("/api/jobs/:id/comments", addComment);
 app.post("/api/login", loginUser);
 
 // profile routes

@@ -1,10 +1,9 @@
 import React from "react";
-import "./Footer.css";
 
 function Footer() {
   return (
-    <footer className="footer">
-      <div className="container">
+    <footer className="w-full py-8 mt-auto">
+      <div className="max-w-7xl mx-auto px-4 flex justify-between">
 
       </div>
     </footer>

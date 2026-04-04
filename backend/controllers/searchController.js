@@ -41,6 +41,22 @@ export async function submitBid(req, res) {
     }
 }
 
+export async function addComment(req, res) {
+    const { id } = req.params;
+    const { userId, username, profilePic, text } = req.body;
+
+    if (!userId) {
+        return res.status(401).json({ message: "Unauthorized. Please log in." });
+    }
+
+    try {
+        const updatedJob = await jobService.addComment(id, { userId, username, profilePic, text });
+        res.status(200).json({ message: "Comment added successfully", job: updatedJob });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
 export async function createJob(req, res) {
     try {
         const savedJob = await jobService.createJob(req.body);

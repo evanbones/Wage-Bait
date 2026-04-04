@@ -1,3 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "DM Serif Display", serif;
+  --font-sans: "Inter", sans-serif;
+  
+  --color-brand-primary: #000000;
+  --color-brand-secondary: #70706b;
+  --color-brand-background: #f9f8f4;
+  --color-brand-surface: #ffffff;
+  --color-brand-accent: #9abddc;
+  --color-brand-accent-light: #d1e5f4;
+}
+
 :root {
   --brand-serif: 'DM Serif Display', serif;
   --brand-sans: 'Inter', sans-serif;
@@ -5,15 +19,18 @@
 }
 
 #root {
-  margin: 0 auto;
-  text-align: center;
-  font-family: var(--brand-sans); 
-  color: var(--text-color);
-  background-color: #f9f8f4; 
-  min-height: 100vh;
+  @apply min-h-screen bg-brand-background font-sans text-brand-primary;
 }
 
 body {
   margin: 0;
   padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-serif;
+}
+
+p {
+  @apply font-sans;
 }

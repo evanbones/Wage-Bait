@@ -61,6 +61,20 @@ export async function addBid(jobId, userId, minimumSalary) {
     }
 }
 
+export async function addComment(jobId, commentData) {
+    try {
+        const job = await Job.findById(jobId);
+        if (!job) throw new Error("Job not found.");
+
+        job.comments.push(commentData);
+        await job.save();
+        return job;
+    } catch (error) {
+        console.error("Error in jobService addComment:", error);
+        throw new Error("Failed to add comment.");
+    }
+}
+
 export async function createJob(jobData) {
     try {
         const newJob = new Job(jobData);
