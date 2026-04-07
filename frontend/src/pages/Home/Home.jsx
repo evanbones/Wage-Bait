@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Search, Filter, X, ChevronRight, Briefcase, TrendingUp, Users } from "lucide-react";
 import Header from "../../components/Header/Header.jsx";
 import Footer from "../../components/Footer/Footer.jsx";
+import WaveBackground from "./WaveBackground.jsx";
 
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -38,15 +39,15 @@ const Home = () => {
     
     navigate(`/search?${params.toString()}`);
   };
+return (
+  <div className="flex flex-col min-h-screen bg-brand-background relative">
+    <WaveBackground />
+    <Header />
 
-  return (
-    <div className="flex flex-col min-h-screen bg-brand-background">
-      <Header />
-      
-      <main className="grow">
-        {/* hero section */}
-        <section className="relative pt-20 pb-32 overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <main className="grow relative z-10">
+      {/* hero section */}
+      <section className="relative pt-20 pb-32">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center max-w-3xl mx-auto mb-12">
               <h1 className="text-6xl md:text-7xl font-serif text-brand-primary mb-6 leading-tight">
                 Find Your Next <span className="text-brand-accent italic">Great</span> Opportunity
@@ -143,9 +144,7 @@ const Home = () => {
               ))}
             </div>
           </div>
-
-          <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[600px] h-[600px] bg-brand-accent/5 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-brand-accent-light/10 rounded-full blur-3xl pointer-events-none" />
+          
         </section>
 
         {/* categories grid */}
