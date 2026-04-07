@@ -15,6 +15,11 @@ const ButtonContainer = () => {
     <div className="flex items-center gap-3">
       {user ? (
         <>
+          {user.role === 'admin' && (
+            <Link to="/admin-dashboard">
+              <ActionButton variant="accent">Admin Dashboard</ActionButton>
+            </Link>
+          )}
           <Link to="/profile">
             <ActionButton variant="outline">Profile</ActionButton>
           </Link>

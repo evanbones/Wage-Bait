@@ -1,4 +1,5 @@
 import Job from '../models/job.model.js';
+import User from '../models/users.model.js';
 
 export async function searchJobs(searchTerm, filters = {}) {
     try {
@@ -83,7 +84,10 @@ export async function deleteComment(jobId, commentId, userId) {
         const comment = job.comments.id(commentId);
         if (!comment) throw new Error("Comment not found.");
 
-        if (comment.userId.toString() !== userId.toString()) {
+        const user = await User.findById(userId);
+        const isAdmin = user && user.role === 'admin';
+
+        if (comment.userId.toString() !== userId.toString() && !isAdmin) {
             throw new Error("Unauthorized to delete this comment.");
         }
 
@@ -110,7 +114,11 @@ export async function updateJob(jobId, userId, updateData) {
     try {
         const job = await Job.findById(jobId);
         if (!job) throw new Error("Job not found");
-        if (job.postedBy.toString() !== userId) {
+        
+        const user = await User.findById(userId);
+        const isAdmin = user && user.role === 'admin';
+
+        if (job.postedBy.toString() !== userId && !isAdmin) {
             throw new Error("Unauthorized to update this job");
         }
         const updatedJob = await Job.findByIdAndUpdate(jobId, updateData, { new: true });
@@ -124,7 +132,11 @@ export async function deleteJob(jobId, userId) {
     try {
         const job = await Job.findById(jobId);
         if (!job) throw new Error("Job not found");
-        if (job.postedBy.toString() !== userId) {
+
+        const user = await User.findById(userId);
+        const isAdmin = user && user.role === 'admin';
+
+        if (job.postedBy.toString() !== userId && !isAdmin) {
             throw new Error("Unauthorized to delete this job");
         }
         await Job.findByIdAndDelete(jobId);

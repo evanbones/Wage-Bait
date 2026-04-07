@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
 import { searchJobs, getJobById, submitBid, addComment, deleteComment, createJob, updateJob, deleteJob } from "./controllers/searchController.js";
-import { registerUser, getProfile, updateProfile, getUserApplications, getUserPostings, getAllUsers } from "./controllers/userController.js";
+import { registerUser, getProfile, updateProfile, getUserApplications, getUserPostings } from "./controllers/userController.js";
+import * as adminController from "./controllers/adminController.js";
 import { loginUser } from "./controllers/loginController.js";
 import Database from "./db/connection.js";
 
@@ -40,7 +41,8 @@ app.get("/api/users/:id/postings", getUserPostings);
 app.post("/api/jobs", createJob);
 
 // admin routes (more to be added)
-app.get("/api/admin/users", getAllUsers);
+app.get("/api/admin/users", adminController.getAllUsers);
+app.put("/api/admin/users/status", adminController.toggleUserStatus);
 
 // delete a job
 app.delete("/api/jobs/:id", deleteJob);

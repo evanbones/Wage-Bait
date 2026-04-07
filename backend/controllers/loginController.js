@@ -9,6 +9,10 @@ export async function loginUser(req, res) {
             return res.json({ message: "User not found" });
         }
 
+        if (userInfo.isActive === false) {
+            return res.status(403).json({ message: "Account disabled. Please contact support." });
+        }
+
         const isMatch = await userInfo.comparePassword(password);
 
         if (!isMatch) {

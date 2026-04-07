@@ -62,12 +62,3 @@ export async function getUserPostings(userId) {
         throw error;
     }
 }
-
-export async function getAllUsers() {
-    try {
-        const users = await User.find({}, "username email skills experience");
-        return users;
-    } catch (error) {
-        throw error;
-    }
-}
