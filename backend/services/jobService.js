@@ -75,6 +75,27 @@ export async function addComment(jobId, commentData) {
     }
 }
 
+export async function deleteComment(jobId, commentId, userId) {
+    try {
+        const job = await Job.findById(jobId);
+        if (!job) throw new Error("Job not found.");
+
+        const comment = job.comments.id(commentId);
+        if (!comment) throw new Error("Comment not found.");
+
+        if (comment.userId.toString() !== userId.toString()) {
+            throw new Error("Unauthorized to delete this comment.");
+        }
+
+        job.comments.pull(commentId);
+        await job.save();
+        return job;
+    } catch (error) {
+        console.error("Error in jobService deleteComment:", error);
+        throw error;
+    }
+}
+
 export async function createJob(jobData) {
     try {
         const newJob = new Job(jobData);

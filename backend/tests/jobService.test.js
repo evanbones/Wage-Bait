@@ -40,4 +40,52 @@ describe('jobService tests', () => {
       expect(result).toEqual(mockJob);
     });
   });
+
+  describe('deleteComment', () => {
+    it('should call findById and delete the comment if authorized', async () => {
+      const mockComment = { _id: 'c1', userId: 'u1', toString: () => 'c1' };
+      const mockJob = {
+        _id: 'j1',
+        comments: {
+          id: jest.fn().mockReturnValue(mockComment),
+          pull: jest.fn()
+        },
+        save: jest.fn().mockResolvedValue(true)
+      };
+      
+      Job.findById.mockResolvedValue(mockJob);
+
+      const result = await jobService.deleteComment('j1', 'c1', 'u1');
+
+      expect(Job.findById).toHaveBeenCalledWith('j1');
+      expect(mockJob.comments.id).toHaveBeenCalledWith('c1');
+      expect(mockJob.comments.pull).toHaveBeenCalledWith('c1');
+      expect(mockJob.save).toHaveBeenCalled();
+    });
+
+    it('should throw error if comment not found', async () => {
+      const mockJob = {
+        _id: 'j1',
+        comments: {
+          id: jest.fn().mockReturnValue(null)
+        }
+      };
+      Job.findById.mockResolvedValue(mockJob);
+
+      await expect(jobService.deleteComment('j1', 'c2', 'u1')).rejects.toThrow('Comment not found.');
+    });
+
+    it('should throw error if unauthorized', async () => {
+      const mockComment = { _id: 'c1', userId: 'u2' };
+      const mockJob = {
+        _id: 'j1',
+        comments: {
+          id: jest.fn().mockReturnValue(mockComment)
+        }
+      };
+      Job.findById.mockResolvedValue(mockJob);
+
+      await expect(jobService.deleteComment('j1', 'c1', 'u1')).rejects.toThrow('Unauthorized to delete this comment.');
+    });
+  });
 });

@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { searchJobs, getJobById, submitBid, addComment, createJob, updateJob, deleteJob } from "./controllers/searchController.js";
+import { searchJobs, getJobById, submitBid, addComment, deleteComment, createJob, updateJob, deleteJob } from "./controllers/searchController.js";
 import { registerUser, getProfile, updateProfile, getUserApplications, getUserPostings, getAllUsers } from "./controllers/userController.js";
 import { loginUser } from "./controllers/loginController.js";
 import Database from "./db/connection.js";
@@ -23,6 +23,7 @@ app.get("/api/search", searchJobs);
 app.get("/api/jobs/:id", getJobById);
 app.post("/api/jobs/bid", submitBid);
 app.post("/api/jobs/:id/comments", addComment);
+app.delete("/api/jobs/:id/comments/:commentId", deleteComment);
 app.post("/api/login", loginUser);
 
 // profile routes

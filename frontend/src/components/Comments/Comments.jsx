@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageSquare, Send, User } from 'lucide-react';
+import { MessageSquare, Send, User, Trash2 } from 'lucide-react';
 
 const Comments = ({ jobId, comments: initialComments, onCommentAdded }) => {
     const [comments, setComments] = useState(initialComments || []);
@@ -7,11 +7,12 @@ const Comments = ({ jobId, comments: initialComments, onCommentAdded }) => {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState(null);
 
+    const currentUser = JSON.parse(localStorage.getItem('user'));
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const user = JSON.parse(localStorage.getItem('user'));
         
-        if (!user) {
+        if (!currentUser) {
             alert('Please log in to comment.');
             return;
         }
@@ -28,9 +29,9 @@ const Comments = ({ jobId, comments: initialComments, onCommentAdded }) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    userId: user._id || user.id,
-                    username: user.username,
-                    profilePic: user.profilePic,
+                    userId: currentUser._id || currentUser.id,
+                    username: currentUser.username,
+                    profilePic: currentUser.profilePic,
                     text: newComment
                 }),
             });
@@ -48,6 +49,34 @@ const Comments = ({ jobId, comments: initialComments, onCommentAdded }) => {
             setError('An error occurred. Please try again.');
         } finally {
             setSubmitting(false);
+        }
+    };
+
+    const handleDeleteComment = async (commentId) => {
+        if (!window.confirm('Are you sure you want to delete this comment?')) return;
+
+        try {
+            const response = await fetch(`http://localhost:8000/api/jobs/${jobId}/comments/${commentId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userId: currentUser._id || currentUser.id
+                }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setComments(data.job.comments);
+                if (onCommentAdded) onCommentAdded(data.job.comments);
+            } else {
+                const data = await response.json();
+                alert(data.message || 'Failed to delete comment.');
+            }
+        } catch (err) {
+            console.error('Error deleting comment:', err);
+            alert('An error occurred. Please try again.');
         }
     };
 
@@ -84,7 +113,7 @@ const Comments = ({ jobId, comments: initialComments, onCommentAdded }) => {
                     <p className="text-brand-secondary italic">No comments yet. Leave a message!</p>
                 ) : (
                     comments.slice().reverse().map((comment, index) => (
-                        <div key={comment._id || index} className="flex gap-4 p-4 bg-brand-surface rounded-xl shadow-sm border border-brand-secondary/10">
+                        <div key={comment._id || index} className="flex gap-4 p-4 bg-brand-surface rounded-xl shadow-sm border border-brand-secondary/10 group">
                             <div className="shrink-0">
                                 {comment.profilePic ? (
                                     <img 
@@ -100,10 +129,21 @@ const Comments = ({ jobId, comments: initialComments, onCommentAdded }) => {
                             </div>
                             <div className="flex-1">
                                 <div className="flex items-center justify-between mb-1">
-                                    <h4 className="font-bold text-brand-primary">{comment.username}</h4>
-                                    <span className="text-xs text-brand-secondary">
-                                        {new Date(comment.createdAt).toLocaleDateString()}
-                                    </span>
+                                    <div className="flex items-center gap-2">
+                                        <h4 className="font-bold text-brand-primary">{comment.username}</h4>
+                                        <span className="text-xs text-brand-secondary">
+                                            {new Date(comment.createdAt).toLocaleDateString()}
+                                        </span>
+                                    </div>
+                                    {currentUser && (currentUser._id === comment.userId || currentUser.id === comment.userId) && (
+                                        <button 
+                                            onClick={() => handleDeleteComment(comment._id)}
+                                            className="text-brand-secondary hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-1"
+                                            title="Delete comment"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    )}
                                 </div>
                                 <p className="text-brand-primary/80 leading-relaxed">{comment.text}</p>
                             </div>

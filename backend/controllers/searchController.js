@@ -57,6 +57,24 @@ export async function addComment(req, res) {
     }
 }
 
+export async function deleteComment(req, res) {
+    const { id, commentId } = req.params;
+    const { userId } = req.body;
+
+    if (!userId) {
+        return res.status(401).json({ message: "Unauthorized. Please log in." });
+    }
+
+    try {
+        const updatedJob = await jobService.deleteComment(id, commentId, userId);
+        res.status(200).json({ message: "Comment deleted successfully", job: updatedJob });
+    } catch (error) {
+        const status = error.message.includes("Unauthorized") ? 403 : 
+                       error.message.includes("not found") ? 404 : 500;
+        res.status(status).json({ message: error.message });
+    }
+}
+
 export async function createJob(req, res) {
     try {
         const savedJob = await jobService.createJob(req.body);
