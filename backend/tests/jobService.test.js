@@ -1,10 +1,18 @@
 import { jest } from '@jest/globals';
 import * as jobService from '../services/jobService.js';
 import Job from '../models/job.model.js';
+import User from '../models/users.model.js';
 
 // simple mock for demonstration
 jest.spyOn(Job, 'find');
 jest.spyOn(Job, 'findById');
+jest.spyOn(Job, 'findByIdAndUpdate');
+jest.spyOn(Job, 'findByIdAndDelete');
+jest.spyOn(User, 'findById');
+
+const validId1 = '507f1f77bcf86cd799439011';
+const validId2 = '507f1f77bcf86cd799439012';
+const validId3 = '507f1f77bcf86cd799439013';
 
 describe('jobService tests', () => {
   afterEach(() => {
@@ -31,61 +39,94 @@ describe('jobService tests', () => {
 
   describe('getJobById', () => {
     it('should return a job by ID', async () => {
-      const mockJob = { _id: '123', title: 'Developer' };
+      const mockJob = { _id: validId1, title: 'Developer' };
       Job.findById.mockResolvedValue(mockJob);
 
-      const result = await jobService.getJobById('123');
+      const result = await jobService.getJobById(validId1);
 
-      expect(Job.findById).toHaveBeenCalledWith('123');
+      expect(Job.findById).toHaveBeenCalledWith(validId1);
       expect(result).toEqual(mockJob);
     });
   });
 
   describe('deleteComment', () => {
     it('should call findById and delete the comment if authorized', async () => {
-      const mockComment = { _id: 'c1', userId: 'u1', toString: () => 'c1' };
+      const mockComment = { _id: validId2, userId: validId3, toString: () => validId2 };
       const mockJob = {
-        _id: 'j1',
+        _id: validId1,
         comments: {
           id: jest.fn().mockReturnValue(mockComment),
           pull: jest.fn()
         },
         save: jest.fn().mockResolvedValue(true)
       };
+      const mockUser = { _id: validId3, role: 'user' };
       
       Job.findById.mockResolvedValue(mockJob);
+      User.findById.mockResolvedValue(mockUser);
 
-      const result = await jobService.deleteComment('j1', 'c1', 'u1');
+      const result = await jobService.deleteComment(validId1, validId2, validId3);
 
-      expect(Job.findById).toHaveBeenCalledWith('j1');
-      expect(mockJob.comments.id).toHaveBeenCalledWith('c1');
-      expect(mockJob.comments.pull).toHaveBeenCalledWith('c1');
+      expect(Job.findById).toHaveBeenCalledWith(validId1);
+      expect(User.findById).toHaveBeenCalledWith(validId3);
+      expect(mockJob.comments.id).toHaveBeenCalledWith(validId2);
+      expect(mockJob.comments.pull).toHaveBeenCalledWith(validId2);
       expect(mockJob.save).toHaveBeenCalled();
     });
 
+    it('should allow admin to delete any comment', async () => {
+        const mockComment = { _id: validId2, userId: 'anotherUser', toString: () => validId2 };
+        const mockJob = {
+          _id: validId1,
+          comments: {
+            id: jest.fn().mockReturnValue(mockComment),
+            pull: jest.fn()
+          },
+          save: jest.fn().mockResolvedValue(true)
+        };
+        const mockAdmin = { _id: validId3, role: 'admin' };
+        
+        Job.findById.mockResolvedValue(mockJob);
+        User.findById.mockResolvedValue(mockAdmin);
+  
+        await jobService.deleteComment(validId1, validId2, validId3);
+  
+        expect(mockJob.comments.pull).toHaveBeenCalledWith(validId2);
+        expect(mockJob.save).toHaveBeenCalled();
+      });
+
     it('should throw error if comment not found', async () => {
       const mockJob = {
-        _id: 'j1',
+        _id: validId1,
         comments: {
           id: jest.fn().mockReturnValue(null)
         }
       };
       Job.findById.mockResolvedValue(mockJob);
 
-      await expect(jobService.deleteComment('j1', 'c2', 'u1')).rejects.toThrow('Comment not found.');
+      await expect(jobService.deleteComment(validId1, validId2, validId3)).rejects.toThrow('Comment not found.');
     });
 
     it('should throw error if unauthorized', async () => {
-      const mockComment = { _id: 'c1', userId: 'u2' };
+      const mockComment = { _id: validId2, userId: 'differentUser' };
       const mockJob = {
-        _id: 'j1',
+        _id: validId1,
         comments: {
           id: jest.fn().mockReturnValue(mockComment)
         }
       };
-      Job.findById.mockResolvedValue(mockJob);
+      const mockUser = { _id: validId3, role: 'user' };
 
-      await expect(jobService.deleteComment('j1', 'c1', 'u1')).rejects.toThrow('Unauthorized to delete this comment.');
+      Job.findById.mockResolvedValue(mockJob);
+      User.findById.mockResolvedValue(mockUser);
+
+      await expect(jobService.deleteComment(validId1, validId2, validId3)).rejects.toThrow('Unauthorized to delete this comment.');
+    });
+  });
+
+  describe('createJob', () => {
+    it('should create and save a new job', async () => {
+      const jobData = { title: 'New Job', salary: 1000, postedBy: validId3 };
     });
   });
 });

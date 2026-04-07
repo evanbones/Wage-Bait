@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import ActionButton from './ActionButton';
+import ActionButton from '../src/components/ActionButton/ActionButton';
 
 // super useful frontend tests :)
 
