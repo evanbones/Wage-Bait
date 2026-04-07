@@ -22,7 +22,15 @@ export async function getUserById(userId) {
 
 export async function updateUserProfile(userId, updateData) {
     try {
-        const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true });
+        const user = await User.findById(userId);
+        if (!user) throw new Error("User not found");
+
+        // update fields individually to trigger hooks
+        Object.keys(updateData).forEach(key => {
+            user[key] = updateData[key];
+        });
+
+        const updatedUser = await user.save();
         return updatedUser;
     } catch (error) {
         throw error;

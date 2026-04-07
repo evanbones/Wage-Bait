@@ -7,10 +7,15 @@ export async function loginUser(req, res) {
         if (!userInfo) {
             console.error("User not found");
             return res.json({ message: "User not found" });
-        } if (userInfo.password !== password) {
+        }
+
+        const isMatch = await userInfo.comparePassword(password);
+
+        if (!isMatch) {
             console.error("Invalid password");
             return res.json({ message: "Invalid password" });
         }
+
         res.json({
             message: "Login successful",
             receivedData: userInfo
