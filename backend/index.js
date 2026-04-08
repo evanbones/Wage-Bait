@@ -3,6 +3,7 @@ import cors from "cors";
 import { searchJobs, getJobById, submitBid, addComment, deleteComment, createJob, updateJob, deleteJob } from "./controllers/searchController.js";
 import { registerUser, getProfile, updateProfile, getUserApplications, getUserPostings } from "./controllers/userController.js";
 import * as adminController from "./controllers/adminController.js";
+import * as analyticsController from "./controllers/analyticsController.js";
 import { loginUser } from "./controllers/loginController.js";
 import Database from "./db/connection.js";
 
@@ -43,6 +44,7 @@ app.post("/api/jobs", createJob);
 // admin routes (more to be added)
 app.get("/api/admin/users", adminController.getAllUsers);
 app.put("/api/admin/users/status", adminController.toggleUserStatus);
+app.get("/api/admin/insights", analyticsController.getMarketInsights);
 
 // delete a job
 app.delete("/api/jobs/:id", deleteJob);

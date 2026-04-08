@@ -51,7 +51,8 @@ const userSchema = new Schema(
         skills: [String],
         experience: [experienceSchema],
         education: [educationSchema]
-    }
+    },
+    { timestamps: true }
 );
 
 userSchema.index({ username: "text", email: "text" });
