@@ -9,7 +9,11 @@ const Breadcrumbs = () => {
   const [jobInfo, setJobInfo] = useState(null);
 
   useEffect(() => {
-    const jobId = searchParams.get('jobId') || (pathnames[0] === 'jobs' ? pathnames[1] : null);
+    // check various sources for a jobId to fetch context
+    const jobId = searchParams.get('jobId') || 
+                  searchParams.get('fromJob') || 
+                  (pathnames[0] === 'jobs' ? pathnames[1] : null) ||
+                  (pathnames[0] === 'edit-job' ? pathnames[1] : null);
     
     if (jobId && jobId.length === 24) { // Basic MongoDB ObjectId length check
         fetch(`http://localhost:8000/api/jobs/${jobId}`)
@@ -27,7 +31,7 @@ const Breadcrumbs = () => {
     }
   }, [location.pathname, searchParams]);
 
-  // Don't show breadcrumbs on the home page - moved after hooks to follow Rules of Hooks
+  // don't show breadcrumbs on the home page
   if (location.pathname === '/') {
     return null;
   }
@@ -44,6 +48,7 @@ const Breadcrumbs = () => {
     'admin-dashboard': 'Admin Dashboard',
     'my-postings': 'My Postings',
     'my-applications': 'My Applications',
+    'user': 'Users'
   };
 
   const renderBreadcrumbs = () => {
@@ -62,7 +67,39 @@ const Breadcrumbs = () => {
       </li>
     );
 
-    // If we're on search results
+    // contextual stacking for User Profiles
+    if (pathnames[0] === 'user' && jobInfo) {
+        // add search results
+        items.push(
+            <li key="search-context" className="flex items-center space-x-2">
+                <ChevronRight size={14} className="text-brand-secondary/40" />
+                <Link to="/search" className="text-brand-secondary hover:text-brand-primary transition-colors">
+                    Search Results
+                </Link>
+            </li>
+        );
+        // add job title - link back to search page with this job selected
+        items.push(
+            <li key="job-context" className="flex items-center space-x-2">
+                <ChevronRight size={14} className="text-brand-secondary/40" />
+                <Link to={`/search?jobId=${jobInfo._id}`} className="text-brand-secondary hover:text-brand-primary transition-colors">
+                    {jobInfo.title}
+                </Link>
+            </li>
+        );
+        // add username (last item)
+        items.push(
+            <li key="user-context" className="flex items-center space-x-2">
+                <ChevronRight size={14} className="text-brand-secondary/40" />
+                <span className="text-brand-primary font-bold">
+                    {pathnames[1]}'s Profile
+                </span>
+            </li>
+        );
+        return items;
+    }
+
+    // Special handling for search results with job context
     if (pathnames[0] === 'search') {
       items.push(
         <li key="search" className="flex items-center space-x-2">
@@ -88,15 +125,21 @@ const Breadcrumbs = () => {
         );
       }
     } else {
-      // Standard path-based breadcrumbs
+      // standard path-based breadcrumbs
       pathnames.forEach((value, index) => {
         const last = index === pathnames.length - 1;
         const to = `/${pathnames.slice(0, index + 1).join('/')}`;
         
         let displayName = breadcrumbNameMap[value] || value;
+        let linkTo = to;
         
+        // if the path segment is 'jobs', redirect it to 'Search Results'
+        if (value === 'jobs') {
+            displayName = 'Search Results';
+            linkTo = '/search';
+        }
+
         // Logical "stacking" for profile pages
-        // If we are on my-postings or my-applications, insert "My Profile" before them
         if ((value === 'my-postings' || value === 'my-applications') && index === 0) {
             items.push(
                 <li key="profile-parent" className="flex items-center space-x-2">
@@ -124,7 +167,7 @@ const Breadcrumbs = () => {
               <span className="text-brand-primary font-bold">{displayName}</span>
             ) : (
               <Link 
-                to={to} 
+                to={linkTo} 
                 className="text-brand-secondary hover:text-brand-primary transition-colors"
               >
                 {displayName}

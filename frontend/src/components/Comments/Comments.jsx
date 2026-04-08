@@ -237,7 +237,7 @@ const Comments = ({ jobId, comments: initialComments, onCommentAdded }) => {
                             <div key={comment._id || index} className="flex flex-col gap-4 p-5 bg-brand-surface rounded-2xl shadow-sm border border-brand-secondary/10 group transition-colors hover:border-brand-accent/30">
                                 {/* parent comment */}
                                 <div className="flex gap-4">
-                                    <Link to={`/user/${comment.username}`} className="shrink-0 block hover:opacity-80 transition-opacity">
+                                    <Link to={`/user/${comment.username}?fromJob=${jobId}`} className="shrink-0 block hover:opacity-80 transition-opacity">
                                         {comment.profilePic ? (
                                             <img 
                                                 src={comment.profilePic} 
@@ -253,7 +253,7 @@ const Comments = ({ jobId, comments: initialComments, onCommentAdded }) => {
                                     <div className="flex-1">
                                         <div className="flex items-center justify-between mb-2">
                                             <div className="flex items-center gap-3">
-                                                <Link to={`/user/${comment.username}`} className="font-bold text-brand-primary hover:text-brand-accent transition-colors">
+                                                <Link to={`/user/${comment.username}?fromJob=${jobId}`} className="font-bold text-brand-primary hover:text-brand-accent transition-colors">
                                                     {comment.username}
                                                 </Link>
                                                 <span className="text-xs text-brand-secondary font-medium px-2 py-0.5 bg-brand-background rounded-full">
@@ -319,7 +319,7 @@ const Comments = ({ jobId, comments: initialComments, onCommentAdded }) => {
                                         {comment.replies.map((reply, rIndex) => (
                                             <div key={reply._id || rIndex} className="flex gap-3 relative group/reply">
                                                 <CornerDownRight className="w-4 h-4 text-brand-secondary/30 absolute -left-10 top-3" />
-                                                <Link to={`/user/${reply.username}`} className="shrink-0 block hover:opacity-80 transition-opacity">
+                                                <Link to={`/user/${reply.username}?fromJob=${jobId}`} className="shrink-0 block hover:opacity-80 transition-opacity">
                                                     {reply.profilePic ? (
                                                         <img 
                                                             src={reply.profilePic} 
@@ -335,7 +335,7 @@ const Comments = ({ jobId, comments: initialComments, onCommentAdded }) => {
                                                 <div className="flex-1 bg-brand-background/50 p-3 rounded-2xl rounded-tl-none border border-brand-secondary/5">
                                                     <div className="flex items-center justify-between mb-1">
                                                         <div className="flex items-center gap-2">
-                                                            <Link to={`/user/${reply.username}`} className="text-sm font-bold text-brand-primary hover:text-brand-accent transition-colors">
+                                                            <Link to={`/user/${reply.username}?fromJob=${jobId}`} className="text-sm font-bold text-brand-primary hover:text-brand-accent transition-colors">
                                                                 {reply.username}
                                                             </Link>
                                                             <span className="text-[10px] text-brand-secondary font-medium uppercase">

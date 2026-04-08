@@ -110,7 +110,7 @@ const JobDetails = ({ jobId: propJobId }) => {
             <div className="max-w-4xl mx-auto">
                 {/* back button */}
                 <button 
-                    onClick={() => navigate(-1)}
+                    onClick={() => navigate('/search')}
                     className="flex items-center gap-1 text-brand-secondary hover:text-brand-primary transition-colors mb-6 group"
                 >
                     <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
