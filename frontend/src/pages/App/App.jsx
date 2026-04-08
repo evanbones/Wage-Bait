@@ -13,6 +13,7 @@ import MyPostings from "../../components/MyPostings/MyPostings.jsx";
 import MyApplications from "../../components/MyApplications/MyApplications.jsx";
 import EditJob from "../../components/EditJob/EditJob.jsx";
 import AdminDashboard from "../AdminDashboard/AdminDashboard.jsx";
+import Breadcrumbs from "../../components/Breadcrumbs/Breadcrumbs.jsx";
 
 const StatusChecker = () => {
   const navigate = useNavigate();
@@ -55,6 +56,7 @@ function App() {
     <>
       <BrowserRouter>
         <StatusChecker />
+        <Breadcrumbs />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

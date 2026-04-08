@@ -9,16 +9,18 @@ function SearchResults() {
   const query = searchParams.get("q") || "";
   const categoriesParam = searchParams.get("categories") || "";
   const minSalaryParam = searchParams.get("minSalary") || "";
+  const jobIdParam = searchParams.get("jobId") || "";
 
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedJobId, setSelectedJobId] = useState(null);
   
   const [showFilters, setShowFilters] = useState(false);
   const [minSalary, setMinSalary] = useState(minSalaryParam);
   const [selectedCategories, setSelectedCategories] = useState(
     categoriesParam ? categoriesParam.split(",") : []
   );
+
+  const selectedJobId = jobIdParam;
 
   const categoriesList = [
     "Technology",
@@ -42,10 +44,10 @@ function SearchResults() {
         const response = await fetch(`http://localhost:8000/api/search?${params.toString()}`);
         const data = await response.json();
         setResults(data);
-        if (data.length > 0) {
-          setSelectedJobId(data[0]._id);
-        } else {
-          setSelectedJobId(null);
+        
+        // If no job is selected but we have results, select the first one if we don't already have one in the URL
+        if (data.length > 0 && !jobIdParam) {
+           updateURL(selectedCategories, minSalary, data[0]._id);
         }
       } catch (error) {
         console.error("Error fetching search results:", error);
@@ -63,15 +65,19 @@ function SearchResults() {
       : [...selectedCategories, category];
     
     setSelectedCategories(updated);
-    updateURL(updated, minSalary);
+    updateURL(updated, minSalary, selectedJobId);
   };
 
   const handleSalaryChange = (value) => {
     setMinSalary(value);
-    updateURL(selectedCategories, value);
+    updateURL(selectedCategories, value, selectedJobId);
   };
 
-  const updateURL = (categories, salary) => {
+  const handleJobSelect = (id) => {
+    updateURL(selectedCategories, minSalary, id);
+  };
+
+  const updateURL = (categories, salary, jobId) => {
     const params = new URLSearchParams(searchParams);
     if (categories.length > 0) {
       params.set("categories", categories.join(","));
@@ -83,6 +89,12 @@ function SearchResults() {
       params.set("minSalary", salary);
     } else {
       params.delete("minSalary");
+    }
+
+    if (jobId) {
+      params.set("jobId", jobId);
+    } else {
+      params.delete("jobId");
     }
     
     setSearchParams(params);
@@ -186,7 +198,7 @@ function SearchResults() {
                     ? "bg-brand-surface border-brand-accent shadow-lg shadow-brand-accent/10" 
                     : "bg-brand-surface/70 border-brand-secondary/5 hover:border-brand-secondary/20 hover:bg-brand-surface"
                   }`}
-                  onClick={() => setSelectedJobId(job._id)}
+                  onClick={() => handleJobSelect(job._id)}
                 >
                   <div className="flex justify-between items-start mb-2">
                     <span className="text-[10px] uppercase font-bold tracking-widest text-brand-accent">
