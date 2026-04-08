@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Filter, Search, Briefcase, MapPin, DollarSign, ChevronRight, SlidersHorizontal } from "lucide-react";
+import { Filter, Search, Briefcase, MapPin, DollarSign, ChevronRight, SlidersHorizontal, ChevronDown } from "lucide-react";
 import Header from "../../components/Header/Header";
 import JobDetails from "../../components/JobDetails/JobDetails";
 
@@ -10,6 +10,7 @@ function SearchResults() {
   const categoriesParam = searchParams.get("categories") || "";
   const minSalaryParam = searchParams.get("minSalary") || "";
   const jobIdParam = searchParams.get("jobId") || "";
+  const sortParam = searchParams.get("sort") || "newest";
 
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,6 +20,7 @@ function SearchResults() {
   const [selectedCategories, setSelectedCategories] = useState(
     categoriesParam ? categoriesParam.split(",") : []
   );
+  const [sort, setSort] = useState(sortParam);
 
   const selectedJobId = jobIdParam;
 
@@ -32,6 +34,13 @@ function SearchResults() {
     "Other"
   ];
 
+  const sortOptions = [
+    { label: "Newest First", value: "newest" },
+    { label: "Most Popular", value: "popular" },
+    { label: "Salary: High to Low", value: "salary_desc" },
+    { label: "Salary: Low to High", value: "salary_asc" }
+  ];
+
   useEffect(() => {
     const fetchResults = async () => {
       setLoading(true);
@@ -40,6 +49,7 @@ function SearchResults() {
         if (query) params.append("q", query);
         if (categoriesParam) params.append("categories", categoriesParam);
         if (minSalaryParam) params.append("minSalary", minSalaryParam);
+        if (sortParam) params.append("sort", sortParam);
 
         const response = await fetch(`http://localhost:8000/api/search?${params.toString()}`);
         const data = await response.json();
@@ -47,7 +57,7 @@ function SearchResults() {
         
         // If no job is selected but we have results, select the first one if we don't already have one in the URL
         if (data.length > 0 && !jobIdParam) {
-           updateURL(selectedCategories, minSalary, data[0]._id);
+           updateURL(selectedCategories, minSalary, data[0]._id, sort);
         }
       } catch (error) {
         console.error("Error fetching search results:", error);
@@ -57,7 +67,7 @@ function SearchResults() {
     };
 
     fetchResults();
-  }, [query, categoriesParam, minSalaryParam]);
+  }, [query, categoriesParam, minSalaryParam, sortParam]);
 
   const handleCategoryChange = (category) => {
     const updated = selectedCategories.includes(category)
@@ -65,19 +75,24 @@ function SearchResults() {
       : [...selectedCategories, category];
     
     setSelectedCategories(updated);
-    updateURL(updated, minSalary, selectedJobId);
+    updateURL(updated, minSalary, selectedJobId, sort);
   };
 
   const handleSalaryChange = (value) => {
     setMinSalary(value);
-    updateURL(selectedCategories, value, selectedJobId);
+    updateURL(selectedCategories, value, selectedJobId, sort);
+  };
+
+  const handleSortChange = (value) => {
+    setSort(value);
+    updateURL(selectedCategories, minSalary, selectedJobId, value);
   };
 
   const handleJobSelect = (id) => {
-    updateURL(selectedCategories, minSalary, id);
+    updateURL(selectedCategories, minSalary, id, sort);
   };
 
-  const updateURL = (categories, salary, jobId) => {
+  const updateURL = (categories, salary, jobId, sortVal) => {
     const params = new URLSearchParams(searchParams);
     if (categories.length > 0) {
       params.set("categories", categories.join(","));
@@ -95,6 +110,12 @@ function SearchResults() {
       params.set("jobId", jobId);
     } else {
       params.delete("jobId");
+    }
+
+    if (sortVal) {
+      params.set("sort", sortVal);
+    } else {
+      params.delete("sort");
     }
     
     setSearchParams(params);
@@ -124,9 +145,22 @@ function SearchResults() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-brand-secondary">Sorted by:</span>
-          <span className="font-bold text-brand-primary">Relevance</span>
+        <div className="flex items-center gap-3 text-sm">
+          <span className="text-brand-secondary font-medium">Sort by:</span>
+          <div className="relative group">
+            <select 
+                value={sort}
+                onChange={(e) => handleSortChange(e.target.value)}
+                className="appearance-none bg-transparent pr-8 pl-1 font-bold text-brand-primary cursor-pointer outline-none hover:text-brand-accent transition-colors"
+            >
+                {sortOptions.map(opt => (
+                    <option key={opt.value} value={opt.value} className="bg-brand-surface text-brand-primary">
+                        {opt.label}
+                    </option>
+                ))}
+            </select>
+            <ChevronDown size={14} className="absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-brand-secondary" />
+          </div>
         </div>
       </div>
 

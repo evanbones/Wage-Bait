@@ -21,7 +21,23 @@ export async function searchJobs(searchTerm, filters = {}) {
             query.salary = { $gte: Number(filters.minSalary) };
         }
 
-        const jobs = await Job.find(query);
+        let jobs = await Job.find(query);
+
+        // sorting logic
+        if (filters.sort === 'salary_desc') {
+            jobs.sort((a, b) => b.salary - a.salary);
+        } else if (filters.sort === 'salary_asc') {
+            jobs.sort((a, b) => a.salary - b.salary);
+        } else if (filters.sort === 'newest') {
+            jobs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        } else if (filters.sort === 'popular') {
+            // sort by most bids
+            jobs.sort((a, b) => (b.bids?.length || 0) - (a.bids?.length || 0));
+        } else {
+            // default: newest first if no sort specified
+            jobs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        }
+
         return jobs;
     } catch (error) {
         console.error("Error in jobService searchJobs:", error);

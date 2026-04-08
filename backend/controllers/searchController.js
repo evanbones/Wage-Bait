@@ -4,9 +4,10 @@ export async function searchJobs(req, res) {
     const searchTerm = req.query.q;
     const categories = req.query.categories ? req.query.categories.split(',') : [];
     const minSalary = req.query.minSalary;
+    const sort = req.query.sort;
     
     try {
-        const filteredJobs = await jobService.searchJobs(searchTerm, { categories, minSalary });
+        const filteredJobs = await jobService.searchJobs(searchTerm, { categories, minSalary, sort });
         res.status(200).json(filteredJobs);
     } catch (error) {
         res.status(500).json({ message: error.message });
