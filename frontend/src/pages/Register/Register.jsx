@@ -54,6 +54,10 @@ function Register() {
       setMessage("Please fill in all fields");
       return;
     }
+    if (!/^[a-zA-Z0-9._]+$/.test(username)) {
+      setMessage("Username can only contain letters, numbers, dots, and underscores");
+      return;
+    }
     if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
       setMessage("Please enter a valid email address");
       return;

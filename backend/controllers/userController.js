@@ -1,7 +1,29 @@
 import * as userService from '../services/userService.js';
+import { sanitizeInput, isValidImageType, isValidUsername } from '../utils/security.js';
 
 export async function registerUser(req, res) {
-    const newUser = req.body;
+    const { username, email, password, profilePic } = req.body;
+
+    // validation
+    if (!username || !email || !password) {
+        return res.status(400).json({ message: "Username, email, and password are required" });
+    }
+
+    if (!isValidUsername(username)) {
+        return res.status(400).json({ message: "Username contains illegal characters" });
+    }
+
+    if (profilePic && !isValidImageType(profilePic)) {
+        return res.status(400).json({ message: "Invalid image format. Please use JPG, PNG, or WEBP" });
+    }
+
+    const newUser = {
+        username: sanitizeInput(username),
+        email: sanitizeInput(email),
+        password, // hashing is handled in the model hook
+        profilePic
+    };
+
     try {
         const savedUser = await userService.saveUser(newUser);
         res.status(201).json({

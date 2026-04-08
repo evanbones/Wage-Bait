@@ -1,7 +1,8 @@
 import * as jobService from '../services/jobService.js';
+import { sanitizeInput } from '../utils/security.js';
 
 export async function searchJobs(req, res) {
-    const searchTerm = req.query.q;
+    const searchTerm = sanitizeInput(req.query.q);
     const categories = req.query.categories ? req.query.categories.split(',') : [];
     const minSalary = req.query.minSalary;
     const sort = req.query.sort;
@@ -44,14 +45,20 @@ export async function submitBid(req, res) {
 
 export async function addComment(req, res) {
     const { id } = req.params;
-    const { userId, username, profilePic, text } = req.body;
+    let { userId, username, profilePic, text } = req.body;
 
     if (!userId) {
         return res.status(401).json({ message: "Unauthorized. Please log in." });
     }
 
     try {
-        const updatedJob = await jobService.addComment(id, { userId, username, profilePic, text });
+        const sanitizedComment = {
+            userId,
+            username: sanitizeInput(username),
+            profilePic,
+            text: sanitizeInput(text)
+        };
+        const updatedJob = await jobService.addComment(id, sanitizedComment);
         res.status(200).json({ message: "Comment added successfully", job: updatedJob });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -78,7 +85,15 @@ export async function deleteComment(req, res) {
 
 export async function createJob(req, res) {
     try {
-        const savedJob = await jobService.createJob(req.body);
+        const jobData = {
+            ...req.body,
+            title: sanitizeInput(req.body.title),
+            company: sanitizeInput(req.body.company),
+            location: sanitizeInput(req.body.location),
+            description: sanitizeInput(req.body.description),
+            category: sanitizeInput(req.body.category)
+        };
+        const savedJob = await jobService.createJob(jobData);
         res.status(201).json(savedJob);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -88,6 +103,10 @@ export async function createJob(req, res) {
 export async function updateJob(req, res) {
     try {
         const { userId, ...updateData } = req.body;
+        
+        if (updateData.title) updateData.title = sanitizeInput(updateData.title);
+        if (updateData.description) updateData.description = sanitizeInput(updateData.description);
+        
         const updatedJob = await jobService.updateJob(req.params.id, userId, updateData);
         res.status(200).json(updatedJob);
     } catch (error) {
@@ -118,7 +137,13 @@ export async function addReply(req, res) {
     }
 
     try {
-        const updatedJob = await jobService.addReply(id, commentId, { userId, username, profilePic, text });
+        const sanitizedReply = {
+            userId,
+            username: sanitizeInput(username),
+            profilePic,
+            text: sanitizeInput(text)
+        };
+        const updatedJob = await jobService.addReply(id, commentId, sanitizedReply);
         res.status(200).json({ message: "Reply added successfully", job: updatedJob });
     } catch (error) {
         res.status(500).json({ message: error.message });
