@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
-import { searchJobs, getJobById, submitBid, addComment, deleteComment, createJob, updateJob, deleteJob } from "./controllers/searchController.js";
-import { registerUser, getProfile, updateProfile, getUserApplications, getUserPostings } from "./controllers/userController.js";
+import { searchJobs, getJobById, submitBid, addComment, deleteComment, createJob, updateJob, deleteJob, addReply, deleteReply } from "./controllers/searchController.js";
+import { registerUser, getProfile, getProfileByUsername, updateProfile, getUserApplications, getUserPostings } from "./controllers/userController.js";
 import * as adminController from "./controllers/adminController.js";
 import * as analyticsController from "./controllers/analyticsController.js";
 import { loginUser } from "./controllers/loginController.js";
@@ -19,38 +19,33 @@ db.connect().catch((err) =>
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 
-// Routes
+// routes
 app.post("/api/register", registerUser);
 app.get("/api/search", searchJobs);
+app.post("/api/login", loginUser);
+
+// jobs
 app.get("/api/jobs/:id", getJobById);
 app.post("/api/jobs/bid", submitBid);
 app.post("/api/jobs/:id/comments", addComment);
 app.delete("/api/jobs/:id/comments/:commentId", deleteComment);
-app.post("/api/login", loginUser);
+app.post("/api/jobs/:id/comments/:commentId/replies", addReply);
+app.delete("/api/jobs/:id/comments/:commentId/replies/:replyId", deleteReply);
+app.post("/api/jobs", createJob);
+app.delete("/api/jobs/:id", deleteJob);
+app.put("/api/jobs/:id", updateJob);
 
-// profile routes
+// users
 app.get("/api/users/:id", getProfile);
+app.get("/api/users/username/:username", getProfileByUsername);
 app.put("/api/users/:id", updateProfile);
-
-// get jobs applied to by user
 app.get("/api/users/:id/applications", getUserApplications);
-
-// get postings by user
 app.get("/api/users/:id/postings", getUserPostings);
 
-// job Creation route
-app.post("/api/jobs", createJob);
-
-// admin routes (more to be added)
+// admin routes
 app.get("/api/admin/users", adminController.getAllUsers);
 app.put("/api/admin/users/status", adminController.toggleUserStatus);
 app.get("/api/admin/insights", analyticsController.getMarketInsights);
-
-// delete a job
-app.delete("/api/jobs/:id", deleteJob);
-
-// update a job
-app.put("/api/jobs/:id", updateJob);
 
 app.listen(PORT, () => {
   console.log(`Express running on http://localhost:${PORT}`);

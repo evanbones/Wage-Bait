@@ -1,44 +1,62 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { X, Camera, Plus, Trash2, Briefcase, GraduationCap, Star, Settings, User } from "lucide-react";
+import { X, Camera, Plus, Trash2, Briefcase, GraduationCap, Star, Settings, User, Eye, Activity, CheckCircle } from "lucide-react";
 import Header from "../Header/Header";
 import ActionButton from "../ActionButton/ActionButton";
 
+const WidgetCard = ({ title, icon: Icon, children, className = "" }) => (
+    <div className={`bg-brand-surface rounded-3xl p-6 md:p-8 shadow-sm border border-brand-secondary/10 flex flex-col ${className}`}>
+        <div className="flex items-center justify-between mb-6 pb-4 border-b border-brand-secondary/10">
+            <div className="flex items-center gap-3">
+                <div className="p-2 bg-brand-accent-light rounded-xl text-brand-primary">
+                    <Icon size={20} />
+                </div>
+                <h2 className="text-lg font-bold text-brand-primary">{title}</h2>
+            </div>
+        </div>
+        <div className="flex-1">
+            {children}
+        </div>
+    </div>
+);
+
 const SkillItem = ({ skill, onRemove }) => (
-  <div className="flex items-center gap-2 bg-brand-background text-brand-primary px-3 py-1 rounded-full border border-brand-secondary/10 group transition-all hover:border-brand-accent">
+  <div className="flex items-center gap-2 bg-brand-background text-brand-primary px-3 py-1.5 rounded-xl border border-brand-secondary/10 group transition-all hover:border-brand-accent hover:shadow-sm">
     <span className="text-sm font-medium">{skill}</span>
     <X size={14} className="cursor-pointer text-brand-secondary hover:text-red-500 transition-colors" onClick={() => onRemove(skill)} />
   </div>
 );
 
 const ExperienceItem = ({ exp, onRemove, index }) => (
-  <div className="relative p-6 bg-brand-surface rounded-2xl border border-brand-secondary/5 shadow-sm group">
+  <div className="relative p-5 bg-brand-background/50 rounded-2xl border border-brand-secondary/5 group transition-colors hover:bg-brand-background">
     <button 
-      className="absolute top-4 right-4 p-2 text-brand-secondary hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+      className="absolute top-4 right-4 p-1.5 text-brand-secondary hover:bg-red-50 hover:text-red-500 rounded-lg transition-all opacity-0 group-hover:opacity-100"
       onClick={() => onRemove(index)}
     >
-      <Trash2 size={18} />
+      <Trash2 size={16} />
     </button>
-    <h4 className="text-lg font-bold text-brand-primary">{exp.role}</h4>
-    <p className="text-brand-secondary font-medium mb-3">{exp.company}</p>
-    <p className="text-xs text-brand-accent uppercase font-bold tracking-widest mb-3">{exp.startDate} - {exp.endDate}</p>
+    <h4 className="text-base font-bold text-brand-primary pr-8">{exp.role}</h4>
+    <p className="text-brand-secondary text-sm font-medium mb-2">{exp.company}</p>
+    <div className="inline-block px-2 py-1 bg-brand-surface rounded-md text-xs text-brand-primary font-bold tracking-wider mb-3 shadow-sm border border-brand-secondary/5">
+        {exp.startDate} - {exp.endDate}
+    </div>
     <p className="text-sm text-brand-primary/80 leading-relaxed">{exp.description}</p>
   </div>
 );
 
 const EducationItem = ({ edu, onRemove, index }) => (
-  <div className="relative p-6 bg-brand-surface rounded-2xl border border-brand-secondary/5 shadow-sm group">
+  <div className="relative p-5 bg-brand-background/50 rounded-2xl border border-brand-secondary/5 group transition-colors hover:bg-brand-background">
     <button 
-      className="absolute top-4 right-4 p-2 text-brand-secondary hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+      className="absolute top-4 right-4 p-1.5 text-brand-secondary hover:bg-red-50 hover:text-red-500 rounded-lg transition-all opacity-0 group-hover:opacity-100"
       onClick={() => onRemove(index)}
     >
-      <Trash2 size={18} />
+      <Trash2 size={16} />
     </button>
-    <h4 className="text-lg font-bold text-brand-primary">{edu.degree}</h4>
-    <p className="text-brand-secondary font-medium">{edu.fieldOfStudy}</p>
-    <div className="mt-4 flex items-center justify-between">
+    <h4 className="text-base font-bold text-brand-primary pr-8">{edu.degree}</h4>
+    <p className="text-brand-secondary text-sm font-medium mb-3">{edu.fieldOfStudy}</p>
+    <div className="flex items-center justify-between pt-3 border-t border-brand-secondary/10">
         <span className="text-sm text-brand-primary font-bold">{edu.school}</span>
-        <span className="text-xs text-brand-secondary font-bold uppercase tracking-widest">Class of {edu.graduationYear}</span>
+        <span className="text-xs text-brand-secondary font-bold uppercase tracking-widest bg-brand-surface px-2 py-1 rounded-md">Class of {edu.graduationYear}</span>
     </div>
   </div>
 );
@@ -149,134 +167,179 @@ const Profile = () => {
     setAccountData({ ...accountData, password: "", confirmPassword: "" });
   };
 
+  const getCompletionPercentage = () => {
+      if(!user) return 0;
+      let score = 0;
+      if (user.profilePic) score += 25;
+      if (user.skills && user.skills.length > 0) score += 25;
+      if (user.experience && user.experience.length > 0) score += 25;
+      if (user.education && user.education.length > 0) score += 25;
+      return score;
+  }
+
   if (loading) return (
     <div className="min-h-screen bg-brand-background">
         <Header />
         <div className="max-w-7xl mx-auto p-12 flex justify-center">
-            <div className="animate-pulse text-brand-secondary font-medium">Loading profile...</div>
+            <div className="animate-pulse text-brand-secondary font-medium flex flex-col items-center gap-4">
+                <Activity className="w-8 h-8 animate-spin" />
+                Loading your dashboard...
+            </div>
         </div>
     </div>
   );
   
   if (error) return (
-    <div className="min-h-screen bg-brand-background text-red-500 p-12 text-center">
+    <div className="min-h-screen bg-brand-background text-red-500 p-12 text-center font-bold">
         Error: {error}
     </div>
   );
+
+  const completionRate = getCompletionPercentage();
 
   return (
     <div className="min-h-screen bg-brand-background">
       <Header />
       
-      <main className="max-w-5xl mx-auto px-4 py-12">
-        <div className="bg-brand-surface rounded-3xl p-8 md:p-12 shadow-xl shadow-brand-primary/5 border border-brand-secondary/10 mb-12">
-            <div className="flex flex-col md:flex-row items-center gap-10">
-                <div className="relative group">
-                    <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl bg-brand-accent-light flex items-center justify-center text-brand-primary overflow-hidden border-4 border-brand-surface shadow-xl">
+      <main className="max-w-7xl mx-auto px-4 py-8 md:py-12">
+        {/* main header / stats dashboard */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+            <div className="lg:col-span-3 bg-brand-surface rounded-3xl p-8 shadow-sm border border-brand-secondary/10 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-brand-accent-light rounded-full blur-3xl opacity-30 -mr-20 -mt-20 pointer-events-none"></div>
+                
+                <div className="relative group shrink-0 z-10">
+                    <div className="w-28 h-28 md:w-36 md:h-36 rounded-3xl bg-brand-accent-light flex items-center justify-center text-brand-primary overflow-hidden border-4 border-brand-surface shadow-xl">
                         {user.profilePic ? (
                             <img src={user.profilePic} alt="Profile" className="w-full h-full object-cover" />
                         ) : (
-                            <User size={64} className="text-brand-accent" />
+                            <User size={56} className="text-brand-accent" />
                         )}
                     </div>
                     <button 
                         onClick={openPopup}
-                        className="absolute -bottom-2 -right-2 bg-brand-primary text-brand-surface p-3 rounded-2xl shadow-lg hover:scale-110 transition-transform group-hover:bg-brand-accent group-hover:text-brand-primary"
+                        className="absolute -bottom-3 -right-3 bg-brand-primary text-brand-surface p-3 rounded-2xl shadow-lg hover:scale-105 transition-transform group-hover:bg-brand-accent group-hover:text-brand-primary"
                     >
-                        <Camera size={20} />
+                        <Camera size={18} />
                     </button>
                 </div>
                 
-                <div className="text-center md:text-left flex-1">
-                    <h1 className="text-4xl md:text-5xl font-serif text-brand-primary mb-2">{user.username}</h1>
-                    <p className="text-brand-secondary font-medium mb-6 flex items-center justify-center md:justify-start gap-2">
-                        <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                        Active Member
-                    </p>
+                <div className="text-center md:text-left flex-1 z-10">
+                    <h1 className="text-3xl md:text-4xl font-serif text-brand-primary mb-2">{user.username}</h1>
+                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-6">
+                        <span className="text-sm font-bold px-3 py-1 bg-green-50 text-green-600 rounded-lg flex items-center gap-1.5 border border-green-100">
+                            <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span> Active
+                        </span>
+                        <span className="text-sm text-brand-secondary font-medium">
+                            {user.email}
+                        </span>
+                    </div>
                     <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+                        <Link to={`/user/${user.username}`}>
+                            <button className="flex items-center gap-2 px-4 py-2 bg-brand-background hover:bg-brand-secondary/10 border border-brand-secondary/20 rounded-xl text-sm font-bold text-brand-primary transition-colors">
+                                <Eye size={16} /> Public View
+                            </button>
+                        </Link>
                         <Link to="/my-applications">
-                            <ActionButton variant="outline" className="text-sm">My Applications</ActionButton>
+                            <ActionButton variant="outline" className="text-sm py-2">My Applications</ActionButton>
                         </Link>
                         <Link to="/my-postings">
-                            <ActionButton variant="outline" className="text-sm">My Postings</ActionButton>
+                            <ActionButton variant="primary" className="text-sm py-2">My Postings</ActionButton>
                         </Link>
                     </div>
                 </div>
+            </div>
+
+            {/* completion widget */}
+            <div className="bg-brand-surface rounded-3xl p-8 shadow-sm border border-brand-secondary/10 flex flex-col justify-center items-center text-center">
+                <h3 className="text-sm font-bold text-brand-secondary uppercase tracking-widest mb-4">Profile Strength</h3>
+                <div className="relative w-24 h-24 mb-4 flex items-center justify-center">
+                    <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                        <path className="text-brand-background stroke-current" strokeWidth="3" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        <path className={`${completionRate === 100 ? 'text-green-500' : 'text-brand-accent'} stroke-current`} strokeWidth="3" strokeDasharray={`${completionRate}, 100`} strokeLinecap="round" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    </svg>
+                    <div className="absolute text-xl font-bold text-brand-primary">{completionRate}%</div>
+                </div>
+                <p className="text-xs text-brand-secondary font-medium">
+                    {completionRate === 100 ? "All set! Looking great." : "Complete your profile to stand out!"}
+                </p>
             </div>
         </div>
 
         {message && (
-            <div className="mb-8 p-4 bg-green-50 text-green-700 rounded-2xl border border-green-100 font-medium text-center animate-in fade-in slide-in-from-top-2">
-                {message}
+            <div className="mb-8 p-4 bg-green-50 text-green-700 rounded-2xl border border-green-200 font-medium text-center flex items-center justify-center gap-2 animate-in fade-in slide-in-from-top-2">
+                <CheckCircle size={18} /> {message}
             </div>
         )}
 
-        <div className="grid lg:grid-cols-3 gap-12">
-            <div className="lg:col-span-1 space-y-12">
-                <section>
-                    <div className="flex items-center gap-2 mb-6">
-                        <Settings className="text-brand-accent" size={24} />
-                        <h2 className="text-xl font-bold text-brand-primary uppercase tracking-widest text-sm">Account Settings</h2>
-                    </div>
+        {/* dashboard grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            {/* left column */}
+            <div className="space-y-6">
+                <WidgetCard title="Account Details" icon={Settings}>
                     <form onSubmit={handleAccountUpdate} className="space-y-4">
-                        <div className="space-y-1">
-                            <label className="text-xs font-bold text-brand-secondary uppercase tracking-widest px-1">Username</label>
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-bold text-brand-secondary uppercase tracking-widest">Username</label>
                             <input
                                 value={accountData.username}
                                 onChange={(e) => setAccountData({ ...accountData, username: e.target.value })}
-                                className="w-full p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none"
+                                className="w-full p-3 bg-brand-background border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none text-sm transition-all"
                             />
                         </div>
-                        <div className="space-y-1">
-                            <label className="text-xs font-bold text-brand-secondary uppercase tracking-widest px-1">Email</label>
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-bold text-brand-secondary uppercase tracking-widest">Email</label>
                             <input
                                 type="email"
                                 value={accountData.email}
                                 onChange={(e) => setAccountData({ ...accountData, email: e.target.value })}
-                                className="w-full p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none"
+                                className="w-full p-3 bg-brand-background border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none text-sm transition-all"
                             />
                         </div>
-                        <div className="space-y-1 pt-4">
-                            <label className="text-xs font-bold text-brand-secondary uppercase tracking-widest px-1">Change Password</label>
+                        <div className="space-y-1.5 pt-3 border-t border-brand-secondary/10">
+                            <label className="text-xs font-bold text-brand-secondary uppercase tracking-widest">Change Password</label>
                             <input
                                 type="password"
                                 placeholder="New password"
                                 value={accountData.password}
                                 onChange={(e) => setAccountData({ ...accountData, password: e.target.value })}
-                                className="w-full p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none mb-2"
+                                className="w-full p-3 bg-brand-background border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none text-sm transition-all mb-2"
                             />
                             <input
                                 type="password"
                                 placeholder="Confirm new password"
                                 value={accountData.confirmPassword}
                                 onChange={(e) => setAccountData({ ...accountData, confirmPassword: e.target.value })}
-                                className="w-full p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none"
+                                className="w-full p-3 bg-brand-background border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none text-sm transition-all"
                             />
                         </div>
-                        <button type="submit" className="w-full py-3 bg-brand-primary text-brand-surface rounded-xl font-bold hover:bg-brand-secondary transition-all shadow-md">
-                            Update Account
+                        <button type="submit" className="w-full mt-2 py-3 bg-brand-primary text-brand-surface rounded-xl font-bold hover:bg-brand-secondary transition-all shadow-sm text-sm">
+                            Save Changes
                         </button>
                     </form>
-                </section>
+                </WidgetCard>
 
-                <section>
-                    <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-2">
-                            <Star className="text-brand-accent" size={24} />
-                            <h2 className="text-xl font-bold text-brand-primary uppercase tracking-widest text-sm">Skills</h2>
-                        </div>
+                <WidgetCard title="Skills" icon={Star}>
+                    <div className="flex flex-wrap gap-2 mb-5">
+                        {user.skills.length === 0 ? (
+                            <span className="text-sm text-brand-secondary italic">No skills added yet.</span>
+                        ) : (
+                            user.skills.map((skill) => (
+                                <SkillItem key={skill} skill={skill} onRemove={(s) => handleUpdate({ skills: user.skills.filter(sk => sk !== s) })} />
+                            ))
+                        )}
                     </div>
-                    <div className="flex flex-wrap gap-2 mb-6">
-                        {user.skills.map((skill) => (
-                            <SkillItem key={skill} skill={skill} onRemove={(s) => handleUpdate({ skills: user.skills.filter(sk => sk !== s) })} />
-                        ))}
-                    </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 relative">
                         <input
                             value={newSkill}
                             onChange={(e) => setNewSkill(e.target.value)}
-                            placeholder="Add skill..."
-                            className="flex-1 p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none text-sm"
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && newSkill) {
+                                    handleUpdate({ skills: [...user.skills, newSkill] });
+                                    setNewSkill("");
+                                }
+                            }}
+                            placeholder="Type a skill and press enter..."
+                            className="flex-1 p-3 bg-brand-background border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none text-sm transition-all pr-12"
                         />
                         <button 
                             onClick={() => {
@@ -284,113 +347,106 @@ const Profile = () => {
                                 handleUpdate({ skills: [...user.skills, newSkill] });
                                 setNewSkill("");
                             }}
-                            className="p-3 bg-brand-accent text-brand-primary rounded-xl hover:bg-brand-primary hover:text-brand-surface transition-all"
+                            className="absolute right-1 top-1 bottom-1 p-2 bg-brand-accent text-brand-primary rounded-lg hover:bg-brand-primary hover:text-brand-surface transition-all"
                         >
-                            <Plus size={20} />
+                            <Plus size={18} />
                         </button>
                     </div>
-                </section>
+                </WidgetCard>
             </div>
 
-            <div className="lg:col-span-2 space-y-12">
-                <section>
-                    <div className="flex items-center justify-between mb-8">
-                        <div className="flex items-center gap-2">
-                            <Briefcase className="text-brand-accent" size={24} />
-                            <h2 className="text-xl font-bold text-brand-primary uppercase tracking-widest text-sm">Experience</h2>
+            {/* right column */}
+            <div className="lg:col-span-2 space-y-6">
+                
+                <WidgetCard title="Work Experience" icon={Briefcase}>
+                    {user.experience.length > 0 && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            {user.experience.map((exp, i) => (
+                                <ExperienceItem
+                                    key={i}
+                                    index={i}
+                                    exp={exp}
+                                    onRemove={(idx) => handleUpdate({ experience: user.experience.filter((_, index) => index !== idx) })}
+                                />
+                            ))}
                         </div>
-                    </div>
-                    
-                    <div className="space-y-6 mb-8">
-                        {user.experience.map((exp, i) => (
-                            <ExperienceItem
-                                key={i}
-                                index={i}
-                                exp={exp}
-                                onRemove={(idx) => handleUpdate({ experience: user.experience.filter((_, index) => index !== idx) })}
-                            />
-                        ))}
-                    </div>
+                    )}
 
-                    <div className="bg-brand-background/50 p-8 rounded-3xl border border-dashed border-brand-secondary/30">
-                        <h4 className="font-bold text-brand-primary mb-6">Add New Experience</h4>
-                        <div className="space-y-4">
-                            <div className="grid md:grid-cols-2 gap-4">
-                                <input placeholder="Company" value={newExp.company} onChange={(e) => setNewExp({...newExp, company: e.target.value})} className="p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none" />
-                                <input placeholder="Role" value={newExp.role} onChange={(e) => setNewExp({...newExp, role: e.target.value})} className="p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none" />
+                    <div className="bg-brand-background/30 p-5 rounded-2xl border border-dashed border-brand-secondary/30">
+                        <h4 className="text-sm font-bold text-brand-primary mb-4">Add New Role</h4>
+                        <div className="space-y-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <input placeholder="Company Name" value={newExp.company} onChange={(e) => setNewExp({...newExp, company: e.target.value})} className="p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none text-sm transition-all" />
+                                <input placeholder="Job Title" value={newExp.role} onChange={(e) => setNewExp({...newExp, role: e.target.value})} className="p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none text-sm transition-all" />
                             </div>
-                            <div className="grid md:grid-cols-2 gap-4">
-                                <input placeholder="Start Date" value={newExp.startDate} onChange={(e) => setNewExp({...newExp, startDate: e.target.value})} className="p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none" />
-                                <input placeholder="End Date" value={newExp.endDate} onChange={(e) => setNewExp({...newExp, endDate: e.target.value})} className="p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none" />
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <input placeholder="Start Date (e.g. 2020)" value={newExp.startDate} onChange={(e) => setNewExp({...newExp, startDate: e.target.value})} className="p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none text-sm transition-all" />
+                                <input placeholder="End Date (e.g. Present)" value={newExp.endDate} onChange={(e) => setNewExp({...newExp, endDate: e.target.value})} className="p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none text-sm transition-all" />
                             </div>
-                            <textarea placeholder="Description" value={newExp.description} onChange={(e) => setNewExp({...newExp, description: e.target.value})} className="w-full p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none h-24" />
+                            <textarea placeholder="Brief description of your responsibilities..." value={newExp.description} onChange={(e) => setNewExp({...newExp, description: e.target.value})} className="w-full p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none text-sm h-20 resize-none transition-all" />
                             <button 
                                 onClick={() => {
+                                    if(!newExp.company || !newExp.role) return alert("Company and Role are required.");
                                     handleUpdate({ experience: [...user.experience, newExp] });
                                     setNewExp({ company: "", role: "", startDate: "", endDate: "", description: "" });
                                 }}
-                                className="w-full py-4 bg-brand-primary text-brand-surface rounded-2xl font-bold hover:bg-brand-secondary transition-all shadow-lg"
+                                className="w-full sm:w-auto px-6 py-2.5 bg-brand-secondary/10 hover:bg-brand-primary text-brand-primary hover:text-brand-surface rounded-xl font-bold transition-all text-sm"
                             >
-                                Save Experience
+                                Add Experience
                             </button>
                         </div>
                     </div>
-                </section>
+                </WidgetCard>
 
-                <section>
-                    <div className="flex items-center justify-between mb-8">
-                        <div className="flex items-center gap-2">
-                            <GraduationCap className="text-brand-accent" size={24} />
-                            <h2 className="text-xl font-bold text-brand-primary uppercase tracking-widest text-sm">Education</h2>
+                <WidgetCard title="Education History" icon={GraduationCap}>
+                    {user.education.length > 0 && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            {user.education.map((edu, i) => (
+                                <EducationItem
+                                    key={i}
+                                    index={i}
+                                    edu={edu}
+                                    onRemove={(idx) => handleUpdate({ education: user.education.filter((_, index) => index !== idx) })}
+                                />
+                            ))}
                         </div>
-                    </div>
+                    )}
 
-                    <div className="grid md:grid-cols-2 gap-6 mb-8">
-                        {user.education.map((edu, i) => (
-                            <EducationItem
-                                key={i}
-                                index={i}
-                                edu={edu}
-                                onRemove={(idx) => handleUpdate({ education: user.education.filter((_, index) => index !== idx) })}
-                            />
-                        ))}
-                    </div>
-
-                    <div className="bg-brand-background/50 p-8 rounded-3xl border border-dashed border-brand-secondary/30">
-                        <h4 className="font-bold text-brand-primary mb-6">Add New Education</h4>
-                        <div className="space-y-4">
-                            <div className="grid md:grid-cols-2 gap-4">
-                                <input placeholder="School" value={newEdu.school} onChange={(e) => setNewEdu({...newEdu, school: e.target.value})} className="p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none" />
-                                <input placeholder="Degree" value={newEdu.degree} onChange={(e) => setNewEdu({...newEdu, degree: e.target.value})} className="p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none" />
+                    <div className="bg-brand-background/30 p-5 rounded-2xl border border-dashed border-brand-secondary/30">
+                        <h4 className="text-sm font-bold text-brand-primary mb-4">Add Institution</h4>
+                        <div className="space-y-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <input placeholder="School / University" value={newEdu.school} onChange={(e) => setNewEdu({...newEdu, school: e.target.value})} className="p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none text-sm transition-all" />
+                                <input placeholder="Degree (e.g. BS, BA)" value={newEdu.degree} onChange={(e) => setNewEdu({...newEdu, degree: e.target.value})} className="p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none text-sm transition-all" />
                             </div>
-                            <div className="grid md:grid-cols-2 gap-4">
-                                <input placeholder="Field of Study" value={newEdu.fieldOfStudy} onChange={(e) => setNewEdu({...newEdu, fieldOfStudy: e.target.value})} className="p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none" />
-                                <input placeholder="Graduation Year" value={newEdu.graduationYear} onChange={(e) => setNewEdu({...newEdu, graduationYear: e.target.value})} className="p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none" />
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <input placeholder="Field of Study" value={newEdu.fieldOfStudy} onChange={(e) => setNewEdu({...newEdu, fieldOfStudy: e.target.value})} className="p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none text-sm transition-all" />
+                                <input placeholder="Graduation Year" value={newEdu.graduationYear} onChange={(e) => setNewEdu({...newEdu, graduationYear: e.target.value})} className="p-3 bg-brand-surface border border-brand-secondary/20 rounded-xl focus:ring-2 focus:ring-brand-accent outline-none text-sm transition-all" />
                             </div>
                             <button 
                                 onClick={() => {
+                                    if(!newEdu.school || !newEdu.degree) return alert("School and Degree are required.");
                                     handleUpdate({ education: [...user.education, newEdu] });
                                     setNewEdu({ school: "", degree: "", fieldOfStudy: "", graduationYear: "" });
                                 }}
-                                className="w-full py-4 bg-brand-primary text-brand-surface rounded-2xl font-bold hover:bg-brand-secondary transition-all shadow-lg"
+                                className="w-full sm:w-auto px-6 py-2.5 bg-brand-secondary/10 hover:bg-brand-primary text-brand-primary hover:text-brand-surface rounded-xl font-bold transition-all text-sm"
                             >
-                                Save Education
+                                Add Education
                             </button>
                         </div>
                     </div>
-                </section>
+                </WidgetCard>
             </div>
         </div>
       </main>
 
-      {/* Profile Picture Popup - Custom Modal implementation for better cross-browser compatibility */}
       {showPopup && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-brand-primary/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={closePopup}>
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-brand-primary/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={closePopup}>
           <div className="bg-brand-surface rounded-3xl p-8 shadow-2xl max-w-sm w-full outline-none animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
             <div className="text-center">
-                <h3 className="text-xl font-serif mb-6 text-brand-primary">Update Profile Picture</h3>
+                <h3 className="text-xl font-serif mb-6 text-brand-primary">Update Picture</h3>
                 
-                <div className="relative w-32 h-32 mx-auto mb-8 bg-brand-background rounded-3xl overflow-hidden border border-brand-secondary/10">
+                <div className="relative w-32 h-32 mx-auto mb-8 bg-brand-background rounded-3xl overflow-hidden border border-brand-secondary/10 shadow-inner">
                     {previewPFP ? (
                         <img src={previewPFP} alt="Preview" className="w-full h-full object-cover" />
                     ) : user.profilePic ? (
@@ -400,9 +456,9 @@ const Profile = () => {
                             <User size={48} />
                         </div>
                     )}
-                    <label className="absolute inset-0 flex items-center justify-center cursor-pointer bg-brand-primary/0 hover:bg-brand-primary/20 transition-colors group">
+                    <label className="absolute inset-0 flex items-center justify-center cursor-pointer bg-brand-primary/0 hover:bg-brand-primary/30 transition-colors group">
                         <input type="file" accept="image/*" onChange={handlePFPChange} className="hidden" />
-                        <Camera size={24} className="text-brand-surface opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <Camera size={28} className="text-brand-surface opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" />
                     </label>
                 </div>
 
@@ -410,13 +466,13 @@ const Profile = () => {
                     <button 
                         onClick={handlePFPUpload}
                         disabled={!PFPFile}
-                        className="w-full py-3 bg-brand-primary text-brand-surface rounded-xl font-bold hover:bg-brand-secondary disabled:opacity-50 transition-all shadow-md"
+                        className="w-full py-3 bg-brand-primary text-brand-surface rounded-xl font-bold hover:bg-brand-secondary disabled:opacity-50 transition-all shadow-md text-sm"
                     >
-                        Upload Photo
+                        Save Photo
                     </button>
                     <button 
                         onClick={closePopup}
-                        className="w-full py-3 text-brand-secondary font-bold hover:text-brand-primary transition-colors"
+                        className="w-full py-3 text-brand-secondary font-bold hover:bg-brand-background rounded-xl transition-colors text-sm"
                     >
                         Cancel
                     </button>

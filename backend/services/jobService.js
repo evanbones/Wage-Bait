@@ -161,3 +161,47 @@ export async function deleteJob(jobId, userId) {
         throw error;
     }
 }
+
+export async function addReply(jobId, commentId, replyData) {
+    try {
+        const job = await Job.findById(jobId);
+        if (!job) throw new Error("Job not found.");
+        
+        const comment = job.comments.id(commentId);
+        if (!comment) throw new Error("Comment not found.");
+
+        comment.replies.push(replyData);
+        await job.save();
+        return job;
+    } catch (error) {
+        console.error("Error in jobService addReply:", error);
+        throw new Error("Failed to add reply.");
+    }
+}
+
+export async function deleteReply(jobId, commentId, replyId, userId) {
+    try {
+        const job = await Job.findById(jobId);
+        if (!job) throw new Error("Job not found.");
+
+        const comment = job.comments.id(commentId);
+        if (!comment) throw new Error("Comment not found.");
+
+        const reply = comment.replies.id(replyId);
+        if (!reply) throw new Error("Reply not found.");
+
+        const user = await User.findById(userId);
+        const isAdmin = user && user.role === 'admin';
+
+        if (reply.userId.toString() !== userId.toString() && !isAdmin) {
+            throw new Error("Unauthorized to delete this reply.");
+        }
+
+        comment.replies.pull(replyId);
+        await job.save();
+        return job;
+    } catch (error) {
+        console.error("Error in jobService deleteReply:", error);
+        throw error;
+    }
+}

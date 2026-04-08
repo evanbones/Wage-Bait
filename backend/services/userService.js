@@ -20,6 +20,16 @@ export async function getUserById(userId) {
     }
 }
 
+export async function getUserByUsername(username) {
+    try {
+        // case-insensitive search for username
+        const user = await User.findOne({ username: { $regex: new RegExp(`^${username}$`, 'i') } });
+        return user;
+    } catch (error) {
+        throw error;
+    }
+}
+
 export async function updateUserProfile(userId, updateData) {
     try {
         const user = await User.findById(userId);

@@ -18,6 +18,24 @@ const bidSchema = new Schema({
     }
 });
 
+const replySchema = new Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    username: String,
+    profilePic: String,
+    text: {
+        type: String,
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+});
+
 const jobSchema = new Schema(
     {
         title: {
@@ -75,7 +93,8 @@ const jobSchema = new Schema(
                 createdAt: {
                     type: Date,
                     default: Date.now
-                }
+                },
+                replies: [replySchema]
             }
         ]
     },

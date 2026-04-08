@@ -108,3 +108,37 @@ export async function deleteJob(req, res) {
         res.status(status).json({ message: error.message });
     }
 }
+
+export async function addReply(req, res) {
+    const { id, commentId } = req.params;
+    const { userId, username, profilePic, text } = req.body;
+
+    if (!userId) {
+        return res.status(401).json({ message: "Unauthorized. Please log in." });
+    }
+
+    try {
+        const updatedJob = await jobService.addReply(id, commentId, { userId, username, profilePic, text });
+        res.status(200).json({ message: "Reply added successfully", job: updatedJob });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+export async function deleteReply(req, res) {
+    const { id, commentId, replyId } = req.params;
+    const { userId } = req.body;
+
+    if (!userId) {
+        return res.status(401).json({ message: "Unauthorized. Please log in." });
+    }
+
+    try {
+        const updatedJob = await jobService.deleteReply(id, commentId, replyId, userId);
+        res.status(200).json({ message: "Reply deleted successfully", job: updatedJob });
+    } catch (error) {
+        const status = error.message.includes("Unauthorized") ? 403 : 
+                       error.message.includes("not found") ? 404 : 500;
+        res.status(status).json({ message: error.message });
+    }
+}

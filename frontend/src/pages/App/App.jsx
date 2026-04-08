@@ -7,6 +7,7 @@ import Login from "../Login/Login.jsx";
 import SearchResults from "../SearchResults/SearchResults.jsx";
 import JobDetails from "../../components/JobDetails/JobDetails.jsx";
 import Profile from "../../components/Profile/Profile.jsx";
+import UserProfile from "../UserProfile/UserProfile.jsx";
 import CreateJob from "../../components/CreateJob/CreateJob.jsx";
 import Admin from "../../components/Admin/Admin.jsx";
 import MyPostings from "../../components/MyPostings/MyPostings.jsx";
@@ -41,10 +42,8 @@ const StatusChecker = () => {
       }
     };
 
-    console.log("StatusChecker interval started (5s)");
     const interval = setInterval(checkStatus, 5000);
     return () => {
-      console.log("StatusChecker interval cleared");
       clearInterval(interval);
     };
   }, []);
@@ -65,6 +64,7 @@ function App() {
           <Route path="/search" element={<SearchResults />} />
           <Route path="/jobs/:id" element={<JobDetails />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/user/:username" element={<UserProfile />} />
           <Route path="/create-job" element={<CreateJob />} />
           <Route path="/edit-job/:id" element={<EditJob />} />
           <Route path="/admin" element={<Admin />} />
