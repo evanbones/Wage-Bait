@@ -13,6 +13,7 @@ const JobDetails = ({ jobId: propJobId }) => {
     const [error, setError] = useState(null);
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
+    const [showWarning, setShowWarning] = useState(false);
 
     useEffect(() => {
         if (!id) return;
@@ -45,10 +46,20 @@ const JobDetails = ({ jobId: propJobId }) => {
             return;
         }
 
-        if (!minSalary || isNaN(minSalary)) {
+        if (!minSalary || isNaN(minSalary) || Number(minSalary) < 0) {
             alert('Please enter a valid minimum salary.');
             return;
         }
+        if (lowestBid !== null && Number(minSalary) > lowestBid) {
+            setShowWarning(true);
+            return;
+        }
+
+        submitBid();
+    };
+    
+    const submitBid = async () => {
+        const user = JSON.parse(localStorage.getItem('user'));
 
         try {
             const response = await fetch('http://localhost:8000/api/jobs/bid', {
@@ -92,6 +103,7 @@ const JobDetails = ({ jobId: propJobId }) => {
             Job not found.
         </div>
     );
+    const lowestBid = job.bids && job.bids.length > 0 ? Math.min(...job.bids.map(bid => bid.minimumSalary)): null;
 
     return (
         <div className="min-h-screen bg-brand-background px-4 py-8 md:px-8">
@@ -160,6 +172,10 @@ const JobDetails = ({ jobId: propJobId }) => {
                             <div className="space-y-4">
                                 <div>
                                     <label htmlFor="minSalary" className="block text-sm font-bold mb-2">
+                                        Current Lowest Salary Bid: 
+                                        {lowestBid === null ? " No bids yet" : ' $' + lowestBid.toLocaleString()}
+                                    </label>
+                                    <label htmlFor="minSalary" className="block text-sm font-bold mb-2">
                                         Your Min Salary ($)
                                     </label>
                                     <input 
@@ -193,6 +209,37 @@ const JobDetails = ({ jobId: propJobId }) => {
                         onCommentAdded={(newComments) => setJob({...job, comments: newComments})}
                     />
                 </div>
+                {showWarning && (
+                    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                        <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
+                            <h3 className="text-lg font-bold mb-3 text-gray-600">
+                                Warning: Higher Than Current Lowest Bid
+                            </h3>
+                            <p className="text-sm text-gray-700 mb-6">
+                                Your bid (${Number(minSalary).toLocaleString()}) is higher than the current lowest bid 
+                                (${lowestBid.toLocaleString()}). Your offer may not be taken into account.
+                            </p>
+
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => setShowWarning(false)}
+                                    className="flex-1 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setShowWarning(false);
+                                        submitBid();
+                                    }}
+                                    className="flex-1 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
+                                >
+                                    Continue Anyway
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
