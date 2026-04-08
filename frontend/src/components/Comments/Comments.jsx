@@ -7,6 +7,7 @@ const Comments = ({ jobId, comments: initialComments, onCommentAdded }) => {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const [isExpanded, setIsExpanded] = useState(false);
+    const [sortOrder, setSortOrder] = useState('newest'); // 'newest' or 'oldest'
 
     const currentUser = JSON.parse(localStorage.getItem('user'));
 
@@ -82,6 +83,10 @@ const Comments = ({ jobId, comments: initialComments, onCommentAdded }) => {
         }
     };
 
+    const sortedComments = sortOrder === 'newest' 
+        ? [...comments].reverse() 
+        : comments;
+
     return (
         <div className="mt-12 pt-8 border-t border-brand-secondary/20">
             <div className="flex items-center gap-3 mb-8">
@@ -113,26 +118,42 @@ const Comments = ({ jobId, comments: initialComments, onCommentAdded }) => {
                 {error && <p className="mt-2 text-red-500 text-sm">{error}</p>}
             </form>
 
-            {/* Collapsible comments list */}
-            <button 
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="flex items-center justify-between w-full hover:bg-brand-secondary/5 p-3 rounded-2xl transition-all group"
-                aria-expanded={isExpanded}
-            >
+            {/* Collapsible comments list header */}
+            <div className="flex items-center justify-between mb-6 px-1">
                 <div className="flex items-center gap-2 text-brand-primary">
-                    <h4 className="font-bold">
+                    <h4 className="font-bold text-lg">
                         {comments.length} {comments.length === 1 ? 'Comment' : 'Comments'}
                     </h4>
                 </div>
-                <div className="flex items-center gap-2 text-brand-secondary group-hover:text-brand-primary transition-colors pr-2">
-                    <span className="text-sm font-medium">{isExpanded ? 'Hide' : 'Show'}</span>
-                    {isExpanded ? (
-                        <ChevronDown className="w-5 h-5" />
-                    ) : (
-                        <ChevronRight className="w-5 h-5" />
+
+                <div className="flex items-center gap-3">
+                    {isExpanded && comments.length > 1 && (
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-brand-surface rounded-xl border border-brand-secondary/10 animate-in fade-in zoom-in-95 duration-200">
+                            <span className="text-[10px] uppercase font-bold tracking-wider text-brand-secondary whitespace-nowrap">Sort:</span>
+                            <select 
+                                value={sortOrder}
+                                onChange={(e) => setSortOrder(e.target.value)}
+                                className="bg-transparent text-xs font-bold text-brand-primary outline-none cursor-pointer"
+                            >
+                                <option value="newest">Newest</option>
+                                <option value="oldest">Oldest</option>
+                            </select>
+                        </div>
                     )}
+
+                    <button 
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="flex items-center gap-2 hover:bg-brand-secondary/5 px-4 py-2 rounded-xl transition-all text-brand-secondary hover:text-brand-primary group"
+                    >
+                        <span className="text-sm font-bold">{isExpanded ? 'Hide' : 'Show'}</span>
+                        {isExpanded ? (
+                            <ChevronDown className="w-5 h-5 transition-transform group-hover:translate-y-0.5" />
+                        ) : (
+                            <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5" />
+                        )}
+                    </button>
                 </div>
-            </button>
+            </div>
 
             {isExpanded && (
                 <div className="mt-6 space-y-6 animate-in fade-in slide-in-from-top-2 duration-300">
@@ -141,7 +162,7 @@ const Comments = ({ jobId, comments: initialComments, onCommentAdded }) => {
                             <p className="text-brand-secondary italic">No comments yet. Be the first to start the conversation!</p>
                         </div>
                     ) : (
-                        comments.slice().reverse().map((comment, index) => (
+                        sortedComments.map((comment, index) => (
                             <div key={comment._id || index} className="flex gap-4 p-5 bg-brand-surface rounded-2xl shadow-sm border border-brand-secondary/10 group hover:border-brand-accent/30 transition-colors">
                                 <div className="shrink-0">
                                     {comment.profilePic ? (
