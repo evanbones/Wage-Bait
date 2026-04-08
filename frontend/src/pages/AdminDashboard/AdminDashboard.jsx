@@ -11,7 +11,8 @@ const AdminDashboard = () => {
     const [insights, setInsights] = useState(null);
     const [userSearch, setUserSearch] = useState('');
     const [jobSearch, setJobSearch] = useState('');
-    const [activeTab, setActiveTab] = useState('users'); // 'users', 'jobs', or 'insights'
+    const [activeTab, setActiveTab] = useState('insights'); // Default to insights to save bandwidth
+    const [expandedUser, setExpandedUser] = useState(null); // For accordion-style user list
 
     const currentUser = JSON.parse(localStorage.getItem('user'));
 
@@ -20,41 +21,23 @@ const AdminDashboard = () => {
             navigate('/');
             return;
         }
-        fetchData();
     }, [navigate]);
 
-    const fetchData = async () => {
-        setIsLoading(true);
-        try {
-            const adminId = currentUser._id || currentUser.id;
-            const [usersRes, jobsRes, insightsRes] = await Promise.all([
-                fetch(`http://localhost:8000/api/admin/users?q=${userSearch}`),
-                fetch(`http://localhost:8000/api/search?q=${jobSearch}`),
-                fetch(`http://localhost:8000/api/admin/insights?adminId=${adminId}`)
-            ]);
-            
-            if (usersRes.ok && jobsRes.ok && insightsRes.ok) {
-                const usersData = await usersRes.json();
-                const jobsData = await jobsRes.json();
-                const insightsData = await insightsRes.json();
-                setUsers(usersData);
-                setJobs(jobsData);
-                setInsights(insightsData);
-            }
-        } catch (err) {
-            console.error("Error fetching admin data:", err);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
+    // Lazy load data based on active tab
     useEffect(() => {
+        if (currentUser?.role !== 'admin') return;
+
         if (activeTab === 'insights' && !insights) {
             fetchInsights();
+        } else if (activeTab === 'users' && users.length === 0) {
+            fetchUsers();
+        } else if (activeTab === 'jobs' && jobs.length === 0) {
+            fetchJobs();
         }
     }, [activeTab]);
 
     const fetchInsights = async () => {
+        setIsLoading(true);
         try {
             const adminId = currentUser._id || currentUser.id;
             const res = await fetch(`http://localhost:8000/api/admin/insights?adminId=${adminId}`);
@@ -64,6 +47,38 @@ const AdminDashboard = () => {
             }
         } catch (err) {
             console.error("Error fetching insights:", err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchUsers = async () => {
+        setIsLoading(true);
+        try {
+            const res = await fetch(`http://localhost:8000/api/admin/users?q=${userSearch}`);
+            if (res.ok) {
+                const data = await res.json();
+                setUsers(data);
+            }
+        } catch (err) {
+            console.error("Error fetching users:", err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchJobs = async () => {
+        setIsLoading(true);
+        try {
+            const res = await fetch(`http://localhost:8000/api/search?q=${jobSearch}`);
+            if (res.ok) {
+                const data = await res.json();
+                setJobs(data);
+            }
+        } catch (err) {
+            console.error("Error fetching jobs:", err);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -86,30 +101,6 @@ const AdminDashboard = () => {
         }, 300);
         return () => clearTimeout(delayDebounceFn);
     }, [jobSearch]);
-
-    const fetchUsers = async () => {
-        try {
-            const res = await fetch(`http://localhost:8000/api/admin/users?q=${userSearch}`);
-            if (res.ok) {
-                const data = await res.json();
-                setUsers(data);
-            }
-        } catch (err) {
-            console.error("Error fetching users:", err);
-        }
-    };
-
-    const fetchJobs = async () => {
-        try {
-            const res = await fetch(`http://localhost:8000/api/search?q=${jobSearch}`);
-            if (res.ok) {
-                const data = await res.json();
-                setJobs(data);
-            }
-        } catch (err) {
-            console.error("Error fetching jobs:", err);
-        }
-    };
 
     const toggleUserStatus = async (userId) => {
         const adminId = currentUser._id || currentUser.id;
@@ -154,7 +145,98 @@ const AdminDashboard = () => {
         }
     };
 
-    if (isLoading && users.length === 0) return <div className="min-h-screen flex items-center justify-center">Loading Admin Controls...</div>;
+    const renderUsersList = () => (
+        <div className="space-y-4">
+            <div className="bg-brand-surface p-4 rounded-2xl border border-brand-secondary/10 mb-6">
+                <p className="text-sm text-brand-secondary italic">
+                    Click a user below to view details and manage their status. Profile images only load when expanded.
+                </p>
+            </div>
+            {users.map(user => (
+                <div key={user._id || user.id} className="bg-brand-surface rounded-2xl border border-brand-secondary/10 overflow-hidden transition-all shadow-sm">
+                    <button 
+                        onClick={() => setExpandedUser(expandedUser === (user._id || user.id) ? null : (user._id || user.id))}
+                        className="w-full px-6 py-4 flex items-center justify-between hover:bg-brand-primary/[0.01] transition-colors"
+                    >
+                        <div className="flex items-center gap-4 text-left">
+                            <div className="w-10 h-10 rounded-full bg-brand-accent-light flex items-center justify-center text-brand-primary font-bold">
+                                {user.username[0].toUpperCase()}
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-brand-primary">{user.username}</h3>
+                                <p className="text-xs text-brand-secondary">{user.email}</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${user.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                                {user.role}
+                            </span>
+                            <div className={`w-2 h-2 rounded-full ${user.isActive ? 'bg-green-500' : 'bg-red-500'}`} />
+                        </div>
+                    </button>
+                    
+                    {expandedUser === (user._id || user.id) && (
+                        <div className="px-6 py-6 border-t border-brand-secondary/5 bg-brand-primary/[0.01] animate-in slide-in-from-top-2 duration-200">
+                            <div className="flex flex-col md:flex-row gap-8">
+                                <div className="flex-shrink-0">
+                                    {user.profilePic ? (
+                                        <img src={user.profilePic} className="w-24 h-24 rounded-2xl object-cover border border-brand-secondary/10 shadow-md" alt="" />
+                                    ) : (
+                                        <div className="w-24 h-24 rounded-2xl bg-brand-accent-light flex items-center justify-center text-3xl text-brand-primary font-bold">
+                                            {user.username[0].toUpperCase()}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="flex-grow space-y-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <p className="text-[10px] uppercase font-bold text-brand-secondary mb-1">Status</p>
+                                            <p className={`font-bold ${user.isActive ? 'text-green-600' : 'text-red-500'}`}>
+                                                {user.isActive ? 'Account Active' : 'Account Disabled'}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] uppercase font-bold text-brand-secondary mb-1">Actions</p>
+                                            <div className="flex gap-2">
+                                                <button 
+                                                    onClick={() => toggleUserStatus(user._id || user.id)}
+                                                    disabled={(user._id || user.id) === (currentUser._id || currentUser.id)}
+                                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${(user._id || user.id) === (currentUser._id || currentUser.id) ? 'opacity-20 cursor-not-allowed' : 'cursor-pointer'} ${user.isActive ? 'bg-red-50 text-red-600 hover:bg-red-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}
+                                                >
+                                                    {user.isActive ? <PowerOff className="w-4 h-4" /> : <Power className="w-4 h-4" />}
+                                                    {user.isActive ? 'Disable User' : 'Enable User'}
+                                                </button>
+                                                <Link 
+                                                    to={`/user/${user.username}?isAdminView=true`}
+                                                    className="px-4 py-2 bg-brand-primary text-white rounded-lg text-xs font-bold hover:bg-opacity-90 transition-all"
+                                                >
+                                                    Full Profile
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {user.skills && user.skills.length > 0 && (
+                                        <div>
+                                            <p className="text-[10px] uppercase font-bold text-brand-secondary mb-2">Top Skills</p>
+                                            <div className="flex flex-wrap gap-2">
+                                                {user.skills.slice(0, 5).map(skill => (
+                                                    <span key={skill} className="px-2 py-1 bg-brand-secondary/5 rounded text-[10px] text-brand-primary">
+                                                        {skill}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            ))}
+        </div>
+    );
+
+    if (isLoading && !insights && !users.length && !jobs.length) return <div className="min-h-screen flex items-center justify-center">Loading Admin Controls...</div>;
 
     const renderInsights = () => {
         if (!insights) return <div className="p-12 text-center">Loading insights...</div>;
@@ -379,66 +461,9 @@ const AdminDashboard = () => {
 
             {/* Main Content Area */}
             {activeTab === 'insights' ? renderInsights() : (
-                <div className="bg-brand-surface rounded-[2rem] border border-brand-secondary/10 shadow-sm overflow-hidden">
+                <div className={`${activeTab === 'users' ? '' : 'bg-brand-surface rounded-[2rem] border border-brand-secondary/10 shadow-sm overflow-hidden'}`}>
                     {activeTab === 'users' ? (
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left">
-                                <thead className="bg-brand-primary/[0.02]">
-                                    <tr>
-                                        <th className="px-6 py-5 text-sm font-bold text-brand-primary">User</th>
-                                        <th className="px-6 py-5 text-sm font-bold text-brand-primary">Role</th>
-                                        <th className="px-6 py-5 text-sm font-bold text-brand-primary">Status</th>
-                                        <th className="px-6 py-5 text-sm font-bold text-brand-primary text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-brand-secondary/10">
-                                    {users.map(user => (
-                                        <tr key={user._id || user.id} className="hover:bg-brand-primary/[0.01] transition-colors">
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    {user.profilePic ? (
-                                                        <img src={user.profilePic} className="w-10 h-10 rounded-full object-cover border border-brand-secondary/10" alt="" />
-                                                    ) : (
-                                                        <div className="w-10 h-10 rounded-full bg-brand-accent-light flex items-center justify-center text-brand-primary font-bold">
-                                                            {user.username[0].toUpperCase()}
-                                                        </div>
-                                                    )}
-                                                    <div>
-                                                        <Link to={`/user/${user.username}?isAdminView=true`} className="font-bold text-brand-primary hover:text-brand-accent transition-colors">
-                                                            {user.username}
-                                                        </Link>
-                                                        <p className="text-sm text-brand-secondary flex items-center gap-1">
-                                                            <Mail className="w-3 h-3" /> {user.email}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className={`px-3 py-1 rounded-full text-xs font-bold ${user.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
-                                                    {user.role}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className={`flex items-center gap-1 text-sm font-bold ${user.isActive ? 'text-green-600' : 'text-red-500'}`}>
-                                                    {user.isActive ? <Power className="w-4 h-4" /> : <PowerOff className="w-4 h-4" />}
-                                                    {user.isActive ? 'Active' : 'Disabled'}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <button 
-                                                    onClick={() => toggleUserStatus(user._id || user.id)}
-                                                    disabled={(user._id || user.id) === (currentUser._id || currentUser.id)}
-                                                    className={`p-2 rounded-xl transition-all ${user.isActive ? 'text-red-500 hover:bg-red-50' : 'text-green-600 hover:bg-green-50'} disabled:opacity-20 cursor-pointer`}
-                                                    title={user.isActive ? "Disable User" : "Enable User"}
-                                                >
-                                                    {user.isActive ? <PowerOff className="w-5 h-5" /> : <Power className="w-5 h-5" />}
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                        renderUsersList()
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
@@ -478,7 +503,7 @@ const AdminDashboard = () => {
                     )}
 
                     {(activeTab === 'users' ? users.length : jobs.length) === 0 && (
-                        <div className="p-20 text-center text-brand-secondary italic font-serif">
+                        <div className="bg-brand-surface rounded-[2rem] border border-brand-secondary/10 p-20 text-center text-brand-secondary italic font-serif">
                             No results found.
                         </div>
                     )}

@@ -2,139 +2,153 @@ import Job from '../models/job.model.js';
 import User from '../models/users.model.js';
 
 export async function getMarketInsights() {
-    const jobs = await Job.find({});
-    const users = await User.find({});
-    
     const now = new Date();
     const todayStart = new Date(now.setHours(0, 0, 0, 0));
     const sevenDaysAgo = new Date(todayStart);
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    // salary analysis
-    const totalOfferedSalary = jobs.reduce((sum, job) => sum + job.salary, 0);
-    const avgOfferedSalary = jobs.length > 0 ? totalOfferedSalary / jobs.length : 0;
-
-    let totalRequestedSalary = 0;
-    let totalBids = 0;
-    let newApplicationsToday = 0;
-    let newCommentsToday = 0;
-    let newJobsToday = 0;
-
-    jobs.forEach(job => {
-        // New jobs today
-        if (job.createdAt && new Date(job.createdAt) >= todayStart) {
-            newJobsToday++;
-        }
-
-        // Bids stats
-        job.bids.forEach(bid => {
-            totalRequestedSalary += bid.minimumSalary;
-            totalBids++;
-            if (bid.createdAt && new Date(bid.createdAt) >= todayStart) {
-                newApplicationsToday++;
-            }
-        });
-
-        // comments stats
-        job.comments.forEach(comment => {
-            if (comment.createdAt && new Date(comment.createdAt) >= todayStart) {
-                newCommentsToday++;
-            }
-        });
-    });
-
-    const avgRequestedSalary = totalBids > 0 ? totalRequestedSalary / totalBids : 0;
-
-    // user stats
-    const newUsersThisWeek = users.filter(u => u.createdAt && new Date(u.createdAt) >= sevenDaysAgo).length;
-
-    // bid density
-    const bidDensity = jobs.length > 0 ? totalBids / jobs.length : 0;
-
-    // remote jobs ratio
-    const remoteJobs = jobs.filter(j => j.remote).length;
-    const remoteRatio = jobs.length > 0 ? (remoteJobs / jobs.length) * 100 : 0;
-
-    // category breakdown
-    const categoryStats = {};
-    jobs.forEach(job => {
-        if (!categoryStats[job.category]) {
-            categoryStats[job.category] = { count: 0, totalSalary: 0, totalBids: 0 };
-        }
-        categoryStats[job.category].count++;
-        categoryStats[job.category].totalSalary += job.salary;
-        categoryStats[job.category].totalBids += job.bids.length;
-    });
-
-    const categories = Object.keys(categoryStats).map(cat => ({
-        name: cat,
-        avgSalary: categoryStats[cat].totalSalary / categoryStats[cat].count,
-        bidCount: categoryStats[cat].totalBids
-    }));
-
-    // time series data (last 7 days)
-    const last7Days = [];
-    for (let i = 6; i >= 0; i--) {
-        const date = new Date();
-        date.setDate(date.getDate() - i);
-        date.setHours(0, 0, 0, 0);
-        last7Days.push({
-            date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-            timestamp: date.getTime(),
-            offered: 0,
-            requested: 0,
-            offeredCount: 0,
-            requestedCount: 0
-        });
-    }
-
-    // populate offered salaries over time
-    jobs.forEach(job => {
-        if (job.createdAt) {
-            const jobDate = new Date(job.createdAt);
-            jobDate.setHours(0, 0, 0, 0);
-            const day = last7Days.find(d => d.timestamp === jobDate.getTime());
-            if (day) {
-                day.offered += job.salary;
-                day.offeredCount++;
-            }
-        }
-        
-        // populate requested salaries over time
-        job.bids.forEach(bid => {
-            if (bid.createdAt) {
-                const bidDate = new Date(bid.createdAt);
-                bidDate.setHours(0, 0, 0, 0);
-                const day = last7Days.find(d => d.timestamp === bidDate.getTime());
-                if (day) {
-                    day.requested += bid.minimumSalary;
-                    day.requestedCount++;
+    // parallel aggregations
+    const [overallStats, categoryStats, timeSeriesStats, newUsersCount] = await Promise.all([
+        // overall stats
+        Job.aggregate([
+            {
+                $facet: {
+                    totals: [
+                        {
+                            $group: {
+                                _id: null,
+                                totalJobs: { $sum: 1 },
+                                avgOfferedSalary: { $avg: "$salary" },
+                                remoteJobs: { $sum: { $cond: ["$remote", 1, 0] } },
+                                totalBids: { $sum: { $size: "$bids" } },
+                                newJobsToday: {
+                                    $sum: { $cond: [{ $gte: ["$createdAt", todayStart] }, 1, 0] }
+                                }
+                            }
+                        }
+                    ],
+                    bidStats: [
+                        { $unwind: "$bids" },
+                        {
+                            $group: {
+                                _id: null,
+                                avgRequestedSalary: { $avg: "$bids.minimumSalary" },
+                                totalBidsCount: { $sum: 1 },
+                                newApplicationsToday: {
+                                    $sum: { $cond: [{ $gte: ["$bids.createdAt", todayStart] }, 1, 0] }
+                                }
+                            }
+                        }
+                    ],
+                    commentStats: [
+                        { $unwind: "$comments" },
+                        {
+                            $group: {
+                                _id: null,
+                                newCommentsToday: {
+                                    $sum: { $cond: [{ $gte: ["$comments.createdAt", todayStart] }, 1, 0] }
+                                }
+                            }
+                        }
+                    ]
                 }
             }
-        });
-    });
+        ]),
 
-    const timeSeries = last7Days.map(day => ({
-        name: day.date,
-        avgOffered: day.offeredCount > 0 ? day.offered / day.offeredCount : avgOfferedSalary, 
-        avgRequested: day.requestedCount > 0 ? day.requested / day.requestedCount : avgRequestedSalary
-    }));
+        // category breakdown
+        Job.aggregate([
+            {
+                $group: {
+                    _id: "$category",
+                    avgSalary: { $avg: "$salary" },
+                    bidCount: { $sum: { $size: "$bids" } }
+                }
+            },
+            {
+                $project: {
+                    name: "$_id",
+                    avgSalary: 1,
+                    bidCount: 1,
+                    _id: 0
+                }
+            }
+        ]),
+
+        // time series data (last 7 days)
+        Job.aggregate([
+            {
+                $facet: {
+                    offeredByDay: [
+                        { $match: { createdAt: { $gte: sevenDaysAgo } } },
+                        {
+                            $group: {
+                                _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                                totalSalary: { $sum: "$salary" },
+                                count: { $sum: 1 }
+                            }
+                        }
+                    ],
+                    requestedByDay: [
+                        { $unwind: "$bids" },
+                        { $match: { "bids.createdAt": { $gte: sevenDaysAgo } } },
+                        {
+                            $group: {
+                                _id: { $dateToString: { format: "%Y-%m-%d", date: "$bids.createdAt" } },
+                                totalRequested: { $sum: "$bids.minimumSalary" },
+                                count: { $sum: 1 }
+                            }
+                        }
+                    ]
+                }
+            }
+        ]),
+
+        // new users count
+        User.countDocuments({ createdAt: { $gte: sevenDaysAgo } })
+    ]);
+
+    const overall = overallStats[0].totals[0] || {};
+    const bidStats = overallStats[0].bidStats[0] || {};
+    const commentStats = overallStats[0].commentStats[0] || {};
+
+    const avgOfferedSalary = overall.avgOfferedSalary || 0;
+    const avgRequestedSalary = bidStats.avgRequestedSalary || 0;
+
+    // format time series
+    const timeSeries = [];
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        d.setHours(0, 0, 0, 0);
+        const dateStr = d.toISOString().split('T')[0];
+        const displayStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+        const offeredDay = timeSeriesStats[0].offeredByDay.find(item => item._id === dateStr);
+        const requestedDay = timeSeriesStats[0].requestedByDay.find(item => item._id === dateStr);
+
+        timeSeries.push({
+            name: displayStr,
+            avgOffered: offeredDay && offeredDay.count > 0 ? offeredDay.totalSalary / offeredDay.count : avgOfferedSalary,
+            avgRequested: requestedDay && requestedDay.count > 0 ? requestedDay.totalRequested / requestedDay.count : avgRequestedSalary
+        });
+    }
 
     return {
         overall: {
             avgOfferedSalary,
             avgRequestedSalary,
             salaryGap: avgOfferedSalary - avgRequestedSalary,
-            bidDensity,
-            remoteRatio,
-            totalBids,
-            totalJobs: jobs.length,
-            newUsersThisWeek,
-            newJobsToday,
-            newApplicationsToday,
-            newCommentsToday
+            bidDensity: overall.totalJobs > 0 ? (overall.totalBids / overall.totalJobs) : 0,
+            remoteRatio: overall.totalJobs > 0 ? (overall.remoteJobs / overall.totalJobs) * 100 : 0,
+            totalBids: overall.totalBids || 0,
+            totalJobs: overall.totalJobs || 0,
+            newUsersThisWeek: newUsersCount,
+            newJobsToday: overall.newJobsToday || 0,
+            newApplicationsToday: bidStats.newApplicationsToday || 0,
+            newCommentsToday: commentStats.newCommentsToday || 0
         },
-        categories,
+        categories: categoryStats,
         timeSeries
     };
 }
+
