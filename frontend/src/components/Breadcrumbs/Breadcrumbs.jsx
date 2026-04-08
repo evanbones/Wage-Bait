@@ -7,6 +7,7 @@ const Breadcrumbs = () => {
   const [searchParams] = useSearchParams();
   const pathnames = location.pathname.split('/').filter((x) => x);
   const [jobInfo, setJobInfo] = useState(null);
+  const isAdminView = searchParams.get('isAdminView') === 'true';
 
   useEffect(() => {
     // check various sources for a jobId to fetch context
@@ -68,25 +69,37 @@ const Breadcrumbs = () => {
     );
 
     // contextual stacking for User Profiles
-    if (pathnames[0] === 'user' && jobInfo) {
-        // add search results
-        items.push(
-            <li key="search-context" className="flex items-center space-x-2">
-                <ChevronRight size={14} className="text-brand-secondary/40" />
-                <Link to="/search" className="text-brand-secondary hover:text-brand-primary transition-colors">
-                    Search Results
-                </Link>
-            </li>
-        );
-        // add job title - link back to search page with this job selected
-        items.push(
-            <li key="job-context" className="flex items-center space-x-2">
-                <ChevronRight size={14} className="text-brand-secondary/40" />
-                <Link to={`/search?jobId=${jobInfo._id}`} className="text-brand-secondary hover:text-brand-primary transition-colors">
-                    {jobInfo.title}
-                </Link>
-            </li>
-        );
+    if (pathnames[0] === 'user') {
+        if (isAdminView) {
+            items.push(
+                <li key="admin-context" className="flex items-center space-x-2">
+                    <ChevronRight size={14} className="text-brand-secondary/40" />
+                    <Link to="/admin-dashboard" className="text-brand-secondary hover:text-brand-primary transition-colors">
+                        Admin Dashboard
+                    </Link>
+                </li>
+            );
+        } else if (jobInfo) {
+            // add search results
+            items.push(
+                <li key="search-context" className="flex items-center space-x-2">
+                    <ChevronRight size={14} className="text-brand-secondary/40" />
+                    <Link to="/search" className="text-brand-secondary hover:text-brand-primary transition-colors">
+                        Search Results
+                    </Link>
+                </li>
+            );
+            // add job title - link back to search page with this job selected
+            items.push(
+                <li key="job-context" className="flex items-center space-x-2">
+                    <ChevronRight size={14} className="text-brand-secondary/40" />
+                    <Link to={`/search?jobId=${jobInfo._id}`} className="text-brand-secondary hover:text-brand-primary transition-colors">
+                        {jobInfo.title}
+                    </Link>
+                </li>
+            );
+        }
+        
         // add username (last item)
         items.push(
             <li key="user-context" className="flex items-center space-x-2">
@@ -100,33 +113,46 @@ const Breadcrumbs = () => {
     }
 
     // Special handling for search results with job context
-    if (pathnames[0] === 'search') {
-      items.push(
-        <li key="search" className="flex items-center space-x-2">
-          <ChevronRight size={14} className="text-brand-secondary/40" />
-          {jobInfo ? (
-            <Link to="/search" className="text-brand-secondary hover:text-brand-primary transition-colors">
-              Search Results
-            </Link>
-          ) : (
-            <span className="text-brand-primary font-bold">Search Results</span>
-          )}
-        </li>
-      );
+    if (pathnames[0] === 'search' || (pathnames[0] === 'jobs' && isAdminView)) {
+        if (isAdminView) {
+            items.push(
+                <li key="admin-context" className="flex items-center space-x-2">
+                    <ChevronRight size={14} className="text-brand-secondary/40" />
+                    <Link to="/admin-dashboard" className="text-brand-secondary hover:text-brand-primary transition-colors">
+                        Admin Dashboard
+                    </Link>
+                </li>
+            );
+        } else {
+            items.push(
+                <li key="search" className="flex items-center space-x-2">
+                <ChevronRight size={14} className="text-brand-secondary/40" />
+                {jobInfo ? (
+                    <Link to="/search" className="text-brand-secondary hover:text-brand-primary transition-colors">
+                    Search Results
+                    </Link>
+                ) : (
+                    <span className="text-brand-primary font-bold">Search Results</span>
+                )}
+                </li>
+            );
+        }
 
-      if (jobInfo) {
-        items.push(
-          <li key="job-details" className="flex items-center space-x-2">
-            <ChevronRight size={14} className="text-brand-secondary/40" />
-            <span className="text-brand-primary font-bold">
-              {jobInfo.title} {jobInfo.location && `(${jobInfo.location})`}
-            </span>
-          </li>
-        );
-      }
-    } else {
-      // standard path-based breadcrumbs
-      pathnames.forEach((value, index) => {
+        if (jobInfo) {
+            items.push(
+            <li key="job-details" className="flex items-center space-x-2">
+                <ChevronRight size={14} className="text-brand-secondary/40" />
+                <span className="text-brand-primary font-bold">
+                {jobInfo.title} {jobInfo.location && `(${jobInfo.location})`}
+                </span>
+            </li>
+            );
+        }
+        return items;
+    }
+
+    // standard path-based breadcrumbs
+    pathnames.forEach((value, index) => {
         const last = index === pathnames.length - 1;
         const to = `/${pathnames.slice(0, index + 1).join('/')}`;
         
@@ -175,8 +201,7 @@ const Breadcrumbs = () => {
             )}
           </li>
         );
-      });
-    }
+    });
 
     return items;
   };

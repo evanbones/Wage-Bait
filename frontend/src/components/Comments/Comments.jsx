@@ -268,7 +268,7 @@ const Comments = ({ jobId, comments: initialComments, onCommentAdded }) => {
                                                     <Reply className="w-3.5 h-3.5" />
                                                     Reply
                                                 </button>
-                                                {currentUser && (currentUser._id === comment.userId || currentUser.id === comment.userId) && (
+                                                {currentUser && (currentUser._id === comment.userId || currentUser.id === comment.userId || currentUser.role === 'admin') && (
                                                     <button 
                                                         onClick={() => handleDeleteComment(comment._id)}
                                                         className="text-brand-secondary hover:text-red-500 p-1.5 hover:bg-red-50 rounded-lg"
@@ -342,7 +342,7 @@ const Comments = ({ jobId, comments: initialComments, onCommentAdded }) => {
                                                                 {new Date(reply.createdAt).toLocaleDateString()}
                                                             </span>
                                                         </div>
-                                                        {currentUser && (currentUser._id === reply.userId || currentUser.id === reply.userId) && (
+                                                        {currentUser && (currentUser._id === reply.userId || currentUser.id === reply.userId || currentUser.role === 'admin') && (
                                                             <button 
                                                                 onClick={() => handleDeleteReply(comment._id, reply._id)}
                                                                 className="text-brand-secondary hover:text-red-500 opacity-0 group-hover/reply:opacity-100 transition-all p-1 hover:bg-red-50 rounded"

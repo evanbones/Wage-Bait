@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { ShieldAlert, Users, FileText, Activity, Search, Trash2, Power, PowerOff, Mail, TrendingUp, DollarSign, Briefcase, Globe, UserPlus, PlusCircle, MessageCircle } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, BarChart, Bar, Legend } from 'recharts';
 
@@ -404,7 +404,9 @@ const AdminDashboard = () => {
                                                         </div>
                                                     )}
                                                     <div>
-                                                        <p className="font-bold text-brand-primary">{user.username}</p>
+                                                        <Link to={`/user/${user.username}?isAdminView=true`} className="font-bold text-brand-primary hover:text-brand-accent transition-colors">
+                                                            {user.username}
+                                                        </Link>
                                                         <p className="text-sm text-brand-secondary flex items-center gap-1">
                                                             <Mail className="w-3 h-3" /> {user.email}
                                                         </p>
@@ -452,7 +454,9 @@ const AdminDashboard = () => {
                                     {jobs.map(job => (
                                         <tr key={job._id} className="hover:bg-brand-primary/[0.01] transition-colors">
                                             <td className="px-6 py-4">
-                                                <p className="font-bold text-brand-primary">{job.title}</p>
+                                                <Link to={`/jobs/${job._id}?isAdminView=true`} className="font-bold text-brand-primary hover:text-brand-accent transition-colors">
+                                                    {job.title}
+                                                </Link>
                                                 <p className="text-sm text-brand-secondary">{job.location}</p>
                                             </td>
                                             <td className="px-6 py-4 text-brand-primary font-medium">{job.company}</td>
