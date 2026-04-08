@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 
-const WaveBackground = () => {
+const WaveBackground = ({ progress: manualProgress, children }) => {
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
+    if (manualProgress !== undefined) return;
+
     const updatePosition = () => {
       setScrollY(window.scrollY);
     };
@@ -15,10 +17,12 @@ const WaveBackground = () => {
       window.removeEventListener("scroll", updatePosition);
       window.removeEventListener("resize", updatePosition);
     };
-  }, []);
+  }, [manualProgress]);
 
   const maxScroll = 900;
-  const progress = Math.min(scrollY / maxScroll, 1);
+  const progress = manualProgress !== undefined 
+    ? manualProgress 
+    : Math.min(scrollY / maxScroll, 1);
 
   // parallax using vh to stay relative to screen height
   const backWaveTranslate = 95 - (progress * 75); 
@@ -49,17 +53,22 @@ const WaveBackground = () => {
         className="absolute top-0 left-[-250%] w-[600%] h-[150vh] transition-transform duration-300 ease-out"
         style={{ transform: `translateY(${frontWaveTranslate}vh)` }}
       >
-        <svg 
-          className="w-full h-[300px] animate-wave opacity-80" 
-          viewBox="0 0 1200 300" 
-          preserveAspectRatio="none"
-        >
-          <path 
-            d="M0,150 C100,280 200,20 300,150 C400,280 500,20 600,150 C700,280 800,20 900,150 C1000,280 1100,20 1200,150 V300 H0 Z" 
-            fill="#d1e5f4"
-          />
-        </svg>
-        <div className="w-full h-full bg-[#d1e5f4] opacity-80 mt-[-2px]" />
+        <div className="relative w-full h-full">
+            <svg 
+            className="w-full h-[300px] animate-wave opacity-80" 
+            viewBox="0 0 1200 300" 
+            preserveAspectRatio="none"
+            >
+            <path 
+                d="M0,150 C100,280 200,20 300,150 C400,280 500,20 600,150 C700,280 800,20 900,150 C1000,280 1100,20 1200,150 V300 H0 Z" 
+                fill="#d1e5f4"
+            />
+            </svg>
+            <div className="w-full h-full bg-[#d1e5f4] opacity-80 mt-[-2px]" />
+            <div className="absolute top-0" style={{ left: '250vw', width: '100vw', height: '100%' }}>
+                {children}
+            </div>
+        </div>
       </div>
     </div>
   );

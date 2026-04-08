@@ -14,6 +14,7 @@ import MyApplications from "../../components/MyApplications/MyApplications.jsx";
 import EditJob from "../../components/EditJob/EditJob.jsx";
 import AdminDashboard from "../AdminDashboard/AdminDashboard.jsx";
 import Breadcrumbs from "../../components/Breadcrumbs/Breadcrumbs.jsx";
+import NotFound from "../NotFound/NotFound.jsx";
 
 const StatusChecker = () => {
   const navigate = useNavigate();
@@ -70,6 +71,7 @@ function App() {
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/my-postings" element={<MyPostings />} />
           <Route path="/my-applications" element={<MyApplications />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </>
