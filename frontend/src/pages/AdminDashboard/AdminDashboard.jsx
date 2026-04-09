@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ShieldAlert, Users, FileText, Activity, Search, Trash2, Power, PowerOff, Mail, TrendingUp, DollarSign, Briefcase, Globe, UserPlus, PlusCircle, MessageCircle } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, BarChart, Bar, Legend } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, BarChart, Bar, Legend } from 'recharts';
+
+const TIME_RANGE_OPTIONS = [
+    { value: 'last24h', label: 'Last 24 Hours' },
+    { value: 'last7d', label: 'Last 7 Days' },
+    { value: 'last30d', label: 'Last 30 Days' },
+    { value: 'all', label: 'All Time' }
+];
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
@@ -11,6 +18,7 @@ const AdminDashboard = () => {
     const [insights, setInsights] = useState(null);
     const [userSearch, setUserSearch] = useState('');
     const [jobSearch, setJobSearch] = useState('');
+    const [timeRange, setTimeRange] = useState('last7d');
     const [activeTab, setActiveTab] = useState('insights'); // Default to insights to save bandwidth
     const [expandedUser, setExpandedUser] = useState(null); // For accordion-style user list
 
@@ -27,20 +35,21 @@ const AdminDashboard = () => {
     useEffect(() => {
         if (currentUser?.role !== 'admin') return;
 
-        if (activeTab === 'insights' && !insights) {
+        if (activeTab === 'insights') {
             fetchInsights();
         } else if (activeTab === 'users' && users.length === 0) {
             fetchUsers();
         } else if (activeTab === 'jobs' && jobs.length === 0) {
             fetchJobs();
         }
-    }, [activeTab]);
+    }, [activeTab, timeRange]);
 
     const fetchInsights = async () => {
         setIsLoading(true);
         try {
             const adminId = currentUser._id || currentUser.id;
-            const res = await fetch(`http://localhost:8000/api/admin/insights?adminId=${adminId}`);
+            const params = new URLSearchParams({ adminId, range: timeRange });
+            const res = await fetch(`http://localhost:8000/api/admin/insights?${params.toString()}`);
             if (res.ok) {
                 const data = await res.json();
                 setInsights(data);
@@ -241,8 +250,46 @@ const AdminDashboard = () => {
     const renderInsights = () => {
         if (!insights) return <div className="p-12 text-center">Loading insights...</div>;
 
+        const appliedRangeKey = insights.range?.key || timeRange;
+        const appliedRangeOption = TIME_RANGE_OPTIONS.find(option => option.value === appliedRangeKey) || TIME_RANGE_OPTIONS[1];
+        const rangeLabel = appliedRangeOption.label;
+        const rangeContextLabel = appliedRangeKey === 'all' ? 'Across all time' : `In ${rangeLabel.toLowerCase()}`;
+        const sortedCategories = [...(insights.categories || [])].sort((a, b) => {
+            const bidDifference = (b.bidCount || 0) - (a.bidCount || 0);
+            if (bidDifference !== 0) return bidDifference;
+            return (a.name || '').localeCompare(b.name || '');
+        });
+
         return (
             <div className="space-y-8 animate-in fade-in duration-500">
+                <div className="bg-brand-surface p-6 rounded-3xl border border-brand-secondary/10 shadow-sm">
+                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+                        <div>
+                            <p className="text-xs font-bold uppercase tracking-wider text-brand-secondary">Time Filter</p>
+                            <h2 className="text-2xl font-serif font-bold text-brand-primary mt-1">{rangeLabel}</h2>
+                        </div>
+                        <div className="flex flex-col sm:items-end gap-2">
+                            <label htmlFor="insights-range" className="text-xs font-bold uppercase tracking-wider text-brand-secondary">Select Range</label>
+                            <select
+                                id="insights-range"
+                                value={timeRange}
+                                onChange={(e) => setTimeRange(e.target.value)}
+                                disabled={isLoading}
+                                className="bg-brand-background border border-brand-secondary/20 rounded-xl px-4 py-2 text-sm font-semibold text-brand-primary focus:ring-2 focus:ring-brand-accent outline-none disabled:opacity-60"
+                            >
+                                {TIME_RANGE_OPTIONS.map((option) => (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                            {isLoading && (
+                                <p className="text-xs text-brand-secondary">Updating insights...</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
                 {/* Stats Grid 1 */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div className="bg-brand-surface p-6 rounded-3xl border border-brand-secondary/10 shadow-sm">
@@ -299,7 +346,7 @@ const AdminDashboard = () => {
                         <p className="text-3xl font-bold text-brand-primary">
                             {insights.overall.newUsersThisWeek}
                         </p>
-                        <p className="text-xs text-brand-secondary mt-1">Joined this week</p>
+                        <p className="text-xs text-brand-secondary mt-1">{rangeContextLabel}</p>
                     </div>
                     <div className="bg-brand-surface p-6 rounded-3xl border border-brand-secondary/10 shadow-sm">
                         <div className="flex items-center gap-3 mb-4 text-brand-secondary">
@@ -309,7 +356,7 @@ const AdminDashboard = () => {
                         <p className="text-3xl font-bold text-brand-primary">
                             {insights.overall.newJobsToday}
                         </p>
-                        <p className="text-xs text-brand-secondary mt-1">Posted today</p>
+                        <p className="text-xs text-brand-secondary mt-1">{rangeContextLabel}</p>
                     </div>
                     <div className="bg-brand-surface p-6 rounded-3xl border border-brand-secondary/10 shadow-sm">
                         <div className="flex items-center gap-3 mb-4 text-brand-secondary">
@@ -319,7 +366,7 @@ const AdminDashboard = () => {
                         <p className="text-3xl font-bold text-brand-primary">
                             {insights.overall.newApplicationsToday}
                         </p>
-                        <p className="text-xs text-brand-secondary mt-1">Submitted today</p>
+                        <p className="text-xs text-brand-secondary mt-1">{rangeContextLabel}</p>
                     </div>
                     <div className="bg-brand-surface p-6 rounded-3xl border border-brand-secondary/10 shadow-sm">
                         <div className="flex items-center gap-3 mb-4 text-brand-secondary">
@@ -329,14 +376,14 @@ const AdminDashboard = () => {
                         <p className="text-3xl font-bold text-brand-primary">
                             {insights.overall.newCommentsToday}
                         </p>
-                        <p className="text-xs text-brand-secondary mt-1">Active today</p>
+                        <p className="text-xs text-brand-secondary mt-1">{rangeContextLabel}</p>
                     </div>
                 </div>
 
                 {/* Charts */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div className="bg-brand-surface p-8 rounded-3xl border border-brand-secondary/10 shadow-sm">
-                        <h3 className="text-xl font-serif font-bold text-brand-primary mb-6">Salary Market Trend (7 Days)</h3>
+                        <h3 className="text-xl font-serif font-bold text-brand-primary mb-6">Salary Market Trend ({rangeLabel})</h3>
                         <div className="h-[300px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={insights.timeSeries}>
@@ -366,10 +413,10 @@ const AdminDashboard = () => {
                     </div>
 
                     <div className="bg-brand-surface p-8 rounded-3xl border border-brand-secondary/10 shadow-sm">
-                        <h3 className="text-xl font-serif font-bold text-brand-primary mb-6">Category Performance</h3>
+                        <h3 className="text-xl font-serif font-bold text-brand-primary mb-6">Category Performance ({rangeLabel})</h3>
                         <div className="h-[300px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={insights.categories} layout="vertical">
+                                <BarChart data={sortedCategories} layout="vertical">
                                     <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
                                     <XAxis type="number" xAxisId="salary" hide />
                                     <XAxis type="number" xAxisId="bids" hide />
