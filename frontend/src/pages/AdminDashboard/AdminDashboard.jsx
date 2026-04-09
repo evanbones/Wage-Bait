@@ -423,7 +423,10 @@ const AdminDashboard = () => {
                                     <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{fill: '#1e293b', fontWeight: 'bold', fontSize: 11}} width={100} />
                                     <Tooltip 
                                         contentStyle={{borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)'}}
-                                        formatter={(val, name) => [name === 'avgSalary' ? `$${Math.round(val).toLocaleString()}` : val, name === 'avgSalary' ? 'Avg. Salary' : 'Total Bids']}
+                                        formatter={(val, _name, item) => {
+                                            const isSalary = item?.dataKey === 'avgSalary';
+                                            return [isSalary ? `$${Math.round(val).toLocaleString()}` : val, isSalary ? 'Avg. Salary' : 'Total Bids'];
+                                        }}
                                     />
                                     <Legend verticalAlign="top" height={36}/>
                                     <Bar dataKey="avgSalary" xAxisId="salary" name="Avg. Salary" fill="#1e293b" radius={[0, 4, 4, 0]} barSize={20} />
