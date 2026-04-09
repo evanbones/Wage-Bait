@@ -90,3 +90,13 @@ export async function getUserPostings(req, res) {
         res.status(500).json({ message: error.message });
     }
 }
+
+export async function deleteApplication(req, res) {
+    const { id: userId, jobId } = req.params;
+    try {
+        const result = await userService.deleteApplication(userId, jobId);
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}

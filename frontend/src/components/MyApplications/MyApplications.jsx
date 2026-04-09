@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Briefcase, MapPin, DollarSign, Calendar, ArrowRight, Search } from 'lucide-react';
+import { Briefcase, MapPin, DollarSign, Calendar, ArrowRight, Search, Trash2 } from 'lucide-react';
 import Header from '../Header/Header';
 
 const MyApplications = () => {
@@ -10,27 +10,47 @@ const MyApplications = () => {
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem('user'));
 
+    const fetchApplications = async () => {
+        try {
+            const response = await fetch(`http://localhost:8000/api/users/${user._id || user.id}/applications`);
+            if (!response.ok) throw new Error('Failed to fetch your applications');
+            const data = await response.json();
+            setApplications(data);
+            setLoading(false);
+        } catch (err) {
+            setError(err.message);
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         if (!user) {
             navigate('/login');
             return;
         }
 
-        const fetchApplications = async () => {
-            try {
-                const response = await fetch(`http://localhost:8000/api/users/${user._id || user.id}/applications`);
-                if (!response.ok) throw new Error('Failed to fetch your applications');
-                const data = await response.json();
-                setApplications(data);
-                setLoading(false);
-            } catch (err) {
-                setError(err.message);
-                setLoading(false);
-            }
-        };
-
         fetchApplications();
     }, [user, navigate]);
+
+    const handleDeleteApplication = async (jobId) => {
+        if (!window.confirm("Are you sure you want to withdraw this application?")) return;
+
+        try {
+            const response = await fetch(`http://localhost:8000/api/users/${user._id || user.id}/applications/${jobId}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                setApplications(applications.filter(app => app._id !== jobId));
+            } else {
+                const data = await response.json();
+                alert(data.message || 'Failed to delete application');
+            }
+        } catch (err) {
+            console.error("Error deleting application:", err);
+            alert("An error occurred. Please try again.");
+        }
+    };
 
     if (loading) return (
         <div className="min-h-screen bg-brand-background">
@@ -76,7 +96,16 @@ const MyApplications = () => {
                             <div key={job._id} className="bg-brand-surface rounded-3xl p-8 border border-brand-secondary/10 shadow-lg shadow-brand-primary/5 hover:shadow-xl transition-shadow group">
                                 <div className="flex flex-col md:flex-row justify-between gap-6">
                                     <div className="flex-1">
-                                        <h2 className="text-2xl font-serif text-brand-primary mb-2 group-hover:text-brand-accent transition-colors">{job.title}</h2>
+                                        <div className="flex justify-between items-start">
+                                            <h2 className="text-2xl font-serif text-brand-primary mb-2 group-hover:text-brand-accent transition-colors">{job.title}</h2>
+                                            <button 
+                                                onClick={() => handleDeleteApplication(job._id)}
+                                                className="p-2 text-brand-secondary hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                                                title="Withdraw Application"
+                                            >
+                                                <Trash2 size={20} />
+                                            </button>
+                                        </div>
                                         <div className="flex flex-wrap gap-4 text-sm text-brand-secondary font-medium mb-6">
                                             <div className="flex items-center gap-1.5">
                                                 <Briefcase size={16} className="text-brand-accent/70" />

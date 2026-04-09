@@ -72,3 +72,16 @@ export async function getUserPostings(userId) {
         throw error;
     }
 }
+
+export async function deleteApplication(userId, jobId) {
+    try {
+        const job = await Job.findById(jobId);
+        if (!job) throw new Error("Job not found");
+
+        job.bids = job.bids.filter(bid => bid.userId.toString() !== userId);
+        await job.save();
+        return { message: "Application removed successfully" };
+    } catch (error) {
+        throw error;
+    }
+}

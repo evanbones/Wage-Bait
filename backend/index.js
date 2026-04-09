@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { searchJobs, getJobById, submitBid, addComment, deleteComment, createJob, updateJob, deleteJob, addReply, deleteReply } from "./controllers/searchController.js";
-import { registerUser, getProfile, getProfileByUsername, updateProfile, getUserApplications, getUserPostings } from "./controllers/userController.js";
+import { registerUser, getProfile, getProfileByUsername, updateProfile, getUserApplications, getUserPostings, deleteApplication } from "./controllers/userController.js";
 import * as adminController from "./controllers/adminController.js";
 import * as analyticsController from "./controllers/analyticsController.js";
 import { loginUser } from "./controllers/loginController.js";
@@ -40,6 +40,7 @@ app.get("/api/users/:id", getProfile);
 app.get("/api/users/username/:username", getProfileByUsername);
 app.put("/api/users/:id", updateProfile);
 app.get("/api/users/:id/applications", getUserApplications);
+app.delete("/api/users/:id/applications/:jobId", deleteApplication);
 app.get("/api/users/:id/postings", getUserPostings);
 
 // admin routes
