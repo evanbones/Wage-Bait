@@ -31,7 +31,7 @@ const AdminDashboard = () => {
         }
     }, [navigate]);
 
-    // Lazy load data based on active tab
+    // lazy load data based on active tab
     useEffect(() => {
         if (currentUser?.role !== 'admin') return;
 
@@ -158,7 +158,7 @@ const AdminDashboard = () => {
         <div className="space-y-4">
             <div className="bg-brand-surface p-4 rounded-2xl border border-brand-secondary/10 mb-6">
                 <p className="text-sm text-brand-secondary italic">
-                    Click a user below to view details and manage their status. Profile images only load when expanded.
+                    Click a user below to view details and manage their status. Profile images only display when expanded.
                 </p>
             </div>
             {users.map(user => (
@@ -467,21 +467,25 @@ const AdminDashboard = () => {
             </div>
 
             {activeTab !== 'insights' && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-                    <div className="bg-brand-surface p-6 rounded-3xl border border-brand-secondary/10 shadow-sm">
-                        <div className="flex items-center justify-between mb-4">
-                            <Users className="w-6 h-6 text-brand-secondary" />
-                            <span className="text-xs font-bold text-brand-accent uppercase tracking-wider">Total Users</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    {activeTab === 'users' && (
+                        <div className="bg-brand-surface p-6 rounded-3xl border border-brand-secondary/10 shadow-sm">
+                            <div className="flex items-center justify-between mb-4">
+                                <Users className="w-6 h-6 text-brand-secondary" />
+                                <span className="text-xs font-bold text-brand-accent uppercase tracking-wider">Total Users</span>
+                            </div>
+                            <p className="text-3xl font-bold text-brand-primary">{users.length}</p>
                         </div>
-                        <p className="text-3xl font-bold text-brand-primary">{users.length}</p>
-                    </div>
-                    <div className="bg-brand-surface p-6 rounded-3xl border border-brand-secondary/10 shadow-sm">
-                        <div className="flex items-center justify-between mb-4">
-                            <FileText className="w-6 h-6 text-brand-secondary" />
-                            <span className="text-xs font-bold text-brand-accent uppercase tracking-wider">Total Jobs</span>
+                    )}
+                    {activeTab === 'jobs' && (
+                        <div className="bg-brand-surface p-6 rounded-3xl border border-brand-secondary/10 shadow-sm">
+                            <div className="flex items-center justify-between mb-4">
+                                <FileText className="w-6 h-6 text-brand-secondary" />
+                                <span className="text-xs font-bold text-brand-accent uppercase tracking-wider">Total Jobs</span>
+                            </div>
+                            <p className="text-3xl font-bold text-brand-primary">{jobs.length}</p>
                         </div>
-                        <p className="text-3xl font-bold text-brand-primary">{jobs.length}</p>
-                    </div>
+                    )}
                     <div className="bg-brand-surface p-6 rounded-3xl border border-brand-secondary/10 shadow-sm">
                         <div className="flex items-center justify-between mb-4">
                             <Activity className="w-6 h-6 text-brand-secondary" />
