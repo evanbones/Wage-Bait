@@ -34,18 +34,13 @@ git clone https://github.com/evanbones/Wage-Bait.git
 cd Wage-Bait
 ```
 
-2. **Create your backend/config.env**
-
-`MONGODB_URI=mongodb+srv://{YOUR CONNECTION STRING}`
-
-3. **Start the development environment**
+2. **Start the development environment**
    Run the following command from the root directory to build and spin up both the Express backend and React frontend:
 
 ```bash
-docker compose watch
+docker compose up -d
 ```
 
-4. **View the application**
+3. **View the application**
 
 - Frontend (Vite/React): Open `http://localhost:5173` in your browser.
-- Backend: Available at `http://localhost:8000`.
