@@ -44,3 +44,9 @@ docker compose up -d
 3. **View the application**
 
 - Frontend (Vite/React): Open `http://localhost:5173` in your browser.
+
+4. **Admin Account Details**
+- To test the admin account features, use the following details to log in:
+   - Username: patrick
+   - Password: patrick2005
+ 
